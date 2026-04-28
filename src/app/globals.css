@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  /* Premium "Sweet Red" Brand Palette */
+  --accent: #f43f5e; /* Sophisticated vibrant red */
+  --accent-foreground: #ffffff;
+  --accent-glow: rgba(244, 63, 94, 0.3);
+  
+  --background: #ffffff;
+  --foreground: #0f172a;
+  
+  --card: #ffffff;
+  --card-hover: #fafafa;
+  --card-foreground: #0f172a;
+  
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #f43f5e;
+  
+  --muted: #64748b;
+  --muted-foreground: #94a3b8;
+  
+  /* Layout Specific Tokens */
+  --header-bg: rgba(255, 255, 255, 0.85);
+  --sidebar: #fafafa;
+  --drawer-bg: #ffffff;
+  --drawer-item-bg: #f8fafc;
+  --overlay-bg: rgba(15, 23, 42, 0.4);
+  
+  --logo-secondary: #0f172a;
+}
+
+[class~="dark"] {
+  --background: #020617;
+  --foreground: #f8fafc;
+  
+  --card: #0f172a;
+  --card-hover: #1e293b;
+  --card-foreground: #f8fafc;
+  
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #f43f5e;
+  
+  --muted: #94a3b8;
+  --muted-foreground: #64748b;
+  
+  --header-bg: rgba(2, 6, 23, 0.85);
+  --sidebar: #020617;
+  --drawer-bg: #0f172a;
+  --drawer-item-bg: #1e293b;
+  --overlay-bg: rgba(0, 0, 0, 0.7);
+  
+  --logo-secondary: #f8fafc;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Custom scrollbar to match theme */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+* {
+  border-color: var(--border);
+}
+
+/* Selection color */
+::selection {
+  background: var(--accent-glow);
+  color: var(--accent);
+}
