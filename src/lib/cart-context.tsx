@@ -109,6 +109,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
     }
     setIsLoading(false);
+    setIsCartOpen(true);
   };
 
   const removeFromCart = async (lineItemId: string) => {

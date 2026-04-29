@@ -21,9 +21,9 @@ const geistMono = Geist_Mono({
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://scrollcommerce.store";
-const SITE_NAME = "Chiangel";
+const SITE_NAME = "Kincloth";
 const SITE_DESCRIPTION =
-  "Chiangel — Discover curated premium products with a TikTok-style scroll feed. New drops every week — Shop the Feed.";
+  "Kincloth — Discover curated premium products with a TikTok-style scroll feed. New drops every week — Shop the Feed.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -71,8 +71,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    site: "@chiangel",
-    creator: "@chiangel",
+    site: "@kincloth",
+    creator: "@kincloth",
     title: `${SITE_NAME} | Shop the Feed`,
     description: SITE_DESCRIPTION,
     images: ["/og-image.png"],
@@ -115,9 +115,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="h-full">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full overflow-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
         suppressHydrationWarning
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

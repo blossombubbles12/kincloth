@@ -13,7 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { ProductCardSkeleton } from './Skeleton';
 
-// ─── Shared Product Card (used by both Desktop & Mobile) ────────────────────
+// ─── Shared Product Card ────────────────────────────────────────────────────
 export const ProductCard: React.FC<{
   product: Product;
   index: number;
@@ -37,69 +37,33 @@ export const ProductCard: React.FC<{
     setIsAdding(true);
     await addToCart(product);
     setIsAdding(false);
-    addToast(`${product.name.toUpperCase()} ADDED TO BAG`, 'success');
-    setTimeout(() => setIsCartOpen(true), 500);
+    addToast(`${product.name.toUpperCase()} ADDED`, 'success');
   };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: Math.min(index * 0.05, 0.3) }}
-      style={{
-        background: 'var(--card)',
-        border: '1px solid var(--border)',
-        borderRadius: mobile ? 16 : 20,
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: mobile ? 'row' : 'column',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.1)',
-        transition: 'background-color 0.3s ease, border-color 0.3s ease',
-      }}
+      transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.3) }}
+      className={`relative flex ${mobile ? 'flex-row' : 'flex-col'} bg-[var(--card)] neo-border neo-shadow-hover transition-all group overflow-hidden`}
     >
       {/* ── Media ── */}
-      <div style={{
-        position: 'relative',
-        flexShrink: 0,
-        width: mobile ? 120 : '100%',
-        aspectRatio: mobile ? '3/4' : '4/5',
-        background: 'var(--card)',
-        overflow: 'hidden',
-      }}>
-        <Link href={`/products/${product.id}`} style={{ display: 'block', width: '100%', height: '100%' }}>
-          {product.video_url ? (
-            <video
-              src={product.video_url}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              muted loop playsInline autoPlay
-            />
-          ) : product.thumbnail_url ? (
+      <div className={`relative flex-shrink-0 ${mobile ? 'w-32' : 'w-full'} aspect-[3/4] bg-zinc-100 overflow-hidden border-b-[3px] border-black`}>
+        <Link href={`/products/${product.id}`} className="block w-full h-full">
+          {product.thumbnail_url ? (
             <img
               src={product.thumbnail_url}
               alt={product.name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:rotate-1"
             />
           ) : (
-            <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg,#1a1a2e,#16213e)' }} />
+            <div className="w-full h-full bg-zinc-200" />
           )}
         </Link>
 
-        {/* Gradient overlay */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%)',
-          pointerEvents: 'none',
-        }} />
-
-        {/* Brand badge */}
-        <div style={{
-          position: 'absolute', top: 8, left: 8,
-          background: 'linear-gradient(135deg,#7c3aed,#4f46e5)',
-          color: '#fff', fontSize: mobile ? 8 : 10, fontWeight: 900,
-          padding: mobile ? '2px 7px' : '4px 10px', borderRadius: 6,
-          textTransform: 'uppercase', letterSpacing: '0.1em',
-        }}>
-          {product.brand || 'BRAND'}
+        {/* Badge */}
+        <div className="absolute top-0 left-0 bg-[var(--btn-bg)] text-[var(--btn-text)] text-[10px] font-bold px-3 py-1 uppercase tracking-widest">
+          {product.brand || 'KINCLOTH'}
         </div>
 
         {/* Like */}
@@ -107,146 +71,43 @@ export const ProductCard: React.FC<{
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (!isLiked) {
-              burst(e.clientX, e.clientY);
-              addToast('Added to Wishlist!', 'success');
-            } else {
-              addToast('Removed from Wishlist', 'info');
-            }
+            if (!isLiked) burst(e.clientX, e.clientY);
             toggleFavourite(product);
           }}
-          style={{
-            position: 'absolute', top: 8, right: 8,
-            width: mobile ? 28 : 34, height: mobile ? 28 : 34,
-            borderRadius: '50%',
-            background: 'var(--header-bg)', backdropFilter: 'blur(6px)',
-            border: '1px solid var(--border)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer',
-            zIndex: 10,
-          }}
+          className={`absolute top-2 right-2 w-9 h-9 neo-border flex items-center justify-center transition-colors ${
+            isLiked ? 'bg-[#ffff00]' : 'bg-[var(--card)]'
+          }`}
         >
-          <Heart
-            size={mobile ? 12 : 15}
-            style={{ fill: isLiked ? '#ef4444' : 'none', stroke: isLiked ? '#ef4444' : 'var(--foreground)' }}
-          />
+          <Heart size={16} fill={isLiked ? 'black' : 'none'} />
         </button>
       </div>
 
       {/* ── Info ── */}
-      <div style={{
-        padding: mobile ? '14px 16px' : '16px 20px 20px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: mobile ? 8 : 12,
-        flex: 1,
-        justifyContent: 'space-between',
-      }}>
-        <Link href={`/products/${product.id}`} className="block group/text">
-          <h3 style={{
-            color: 'var(--foreground)', fontWeight: 800,
-            fontSize: mobile ? 14 : 15,
-            marginBottom: 4, lineHeight: 1.3,
-          }} className="group-hover/text:text-rose-500 transition-colors">
-            {product.name}
-          </h3>
-          <p style={{
-            color: 'var(--muted)', fontSize: mobile ? 11 : 12, lineHeight: 1.5,
-            display: '-webkit-box', WebkitLineClamp: mobile ? 2 : 2,
-            WebkitBoxOrient: 'vertical', overflow: 'hidden',
-          }}>
-            {product.description}
-          </p>
-        </Link>
-
-        {/* Price + Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-          <span style={{ color: 'var(--foreground)', fontWeight: 900, fontSize: mobile ? 16 : 18 }}>
-            ${product.price.toFixed(2)}
+      <div className="p-5 flex flex-col gap-3 flex-1">
+        <div className="flex justify-between items-start gap-3">
+          <Link href={`/products/${product.id}`} className="flex-1 hover:underline">
+            <h3 className="text-sm font-bold leading-snug tracking-tight text-[var(--foreground)]">
+              {product.name}
+            </h3>
+          </Link>
+          <span className="text-sm font-black bg-[var(--accent)] text-black px-2 py-0.5 border-2 border-[var(--border)] flex-shrink-0">
+            ${product.price.toFixed(0)}
           </span>
+        </div>
 
-          <div style={{ display: 'flex', gap: 6, flex: 1, justifyContent: mobile ? 'flex-end' : 'initial' }}>
-            {mobile && (
-              <motion.button
-                whileTap={{ scale: 0.8, rotate: isLiked ? -15 : 15 }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (!isLiked) burst(e.clientX, e.clientY);
-                  toggleFavourite(product);
-                  addToast(isLiked ? 'Removed from Wishlist' : 'Added to Wishlist!', isLiked ? 'info' : 'success');
-                }}
-                style={{
-                  width: 34, height: 34, borderRadius: 10,
-                  background: isLiked ? 'rgba(244,63,94,0.1)' : 'var(--card)',
-                  border: `1px solid ${isLiked ? 'var(--accent)' : 'var(--border)'}`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'pointer',
-                }}
-              >
-                <Heart
-                  size={16}
-                  style={{ fill: isLiked ? 'var(--accent)' : 'none', stroke: isLiked ? 'var(--accent)' : 'var(--foreground)' }}
-                />
-              </motion.button>
-            )}
-            {!mobile && (
-              <button style={{
-                width: 36, height: 36, borderRadius: 10,
-                background: 'var(--border)',
-                border: '1px solid var(--border)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer',
-              }}>
-                <Share2 size={14} style={{ stroke: 'var(--muted)' }} />
-              </button>
-            )}
+        <p className="text-xs text-[var(--muted)] line-clamp-2 leading-relaxed">
+          {product.description}
+        </p>
 
-            <motion.button
-              whileTap={{ scale: 0.93 }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleAdd(e);
-              }}
-              disabled={isAdding || isLoading}
-              style={{
-                height: mobile ? 34 : 36,
-                padding: `0 ${mobile ? 12 : 16}px`,
-                borderRadius: 10,
-                background: isAdding ? '#22c55e' : 'var(--foreground)',
-                color: isAdding ? '#fff' : 'var(--background)',
-                border: 'none', fontWeight: 800,
-                fontSize: mobile ? 12 : 13,
-                display: 'flex', alignItems: 'center', gap: 5,
-                cursor: 'pointer', transition: 'all 0.2s',
-                opacity: (isAdding || isLoading) ? 0.7 : 1,
-                whiteSpace: 'nowrap',
-                flex: mobile ? 1 : 'none',
-                maxWidth: mobile ? 100 : 'none',
-                justifyContent: 'center',
-              }}
-            >
-              <AnimatePresence mode="wait">
-                {isAdding ? (
-                  <motion.span key="adding" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                    style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <div style={{
-                      width: 12, height: 12, border: '2px solid rgba(255,255,255,0.3)',
-                      borderTopColor: '#fff', borderRadius: '50%', animation: 'sc-spin 0.7s linear infinite'
-                    }} />
-                    {mobile ? '' : 'Adding'}
-                  </motion.span>
-                ) : (
-                  <motion.span key="add" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                    style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <ShoppingBag size={12} />
-                    {mobile ? 'Add' : 'Add to Bag'}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </motion.button>
-          </div>
+        <div className="mt-auto flex gap-2">
+          <button
+            onClick={(e) => handleAdd(e)}
+            disabled={isAdding || isLoading}
+            className="flex-1 neo-button flex items-center justify-center gap-2 py-2 h-10 text-xs"
+          >
+            {isAdding ? <Loader2 className="animate-spin" size={14} /> : <ShoppingBag size={14} />}
+            {isAdding ? 'Adding...' : 'Add to Bag'}
+          </button>
         </div>
       </div>
     </motion.div>
@@ -262,7 +123,6 @@ export function useInfiniteProducts(initialProducts: Product[]) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const didInitialFetch = useRef(false);
 
-  // If we got no SSR products, fetch page 1 immediately on mount
   useEffect(() => {
     if (initialProducts.length > 0 || didInitialFetch.current) return;
     didInitialFetch.current = true;
@@ -274,7 +134,7 @@ export function useInfiniteProducts(initialProducts: Product[]) {
       })
       .catch(console.error)
       .finally(() => setIsLoadingMore(false));
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const loadMore = useCallback(async () => {
     if (isLoadingMore || !hasMore) return;
@@ -301,33 +161,23 @@ export function useInfiniteProducts(initialProducts: Product[]) {
 }
 
 // ─── Desktop Feed (2-col responsive grid) ──────────────────────────────────
-interface DesktopFeedProps {
+export const DesktopFeed: React.FC<{
   products: Product[];
   isLoadingMore: boolean;
   hasMore: boolean;
   bottomRef: React.RefObject<HTMLDivElement | null>;
-}
-
-export const DesktopFeed: React.FC<DesktopFeedProps> = ({ 
-  products, 
-  isLoadingMore, 
-  hasMore, 
-  bottomRef 
-}) => {
+}> = ({ products, isLoadingMore, hasMore, bottomRef }) => {
   return (
-    <div style={{ padding: 16 }}>
-      <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div>
-          <h2 style={{ color: 'var(--foreground)', fontWeight: 900, fontSize: 18, letterSpacing: '-0.03em', margin: 0 }}>For You</h2>
-          <p style={{ color: 'var(--muted)', fontSize: 12, marginTop: 2, marginBottom: 0 }}>{products.length} products</p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Zap size={14} style={{ fill: '#fbbf24', stroke: '#fbbf24' }} />
-          <span style={{ color: '#fbbf24', fontSize: 12, fontWeight: 700 }}>Live Feed</span>
+    <div>
+      <div className="flex items-center justify-between mb-10 border-b-[3px] border-[var(--border)] pb-5">
+        <h2 className="text-2xl font-black tracking-tight">New Drops</h2>
+        <div className="flex items-center gap-2 bg-[var(--accent)] px-3 py-1.5 border-[3px] border-[var(--border)] neo-shadow">
+          <Zap size={16} fill="black" />
+          <span className="font-bold text-xs uppercase tracking-widest text-black">Live Feed</span>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.length > 0 ? (
           products.map((p, i) => <ProductCard key={`${p.id}-${i}`} product={p} index={i} />)
         ) : (
@@ -336,11 +186,13 @@ export const DesktopFeed: React.FC<DesktopFeedProps> = ({
         {isLoadingMore && [1,2,3,4].map(n => <ProductCardSkeleton key={`skeleton-${n}`} />)}
       </div>
 
-      <div ref={bottomRef} style={{ height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 16 }}>
-        {!hasMore && products.length > 0 && <p style={{ color: 'var(--muted)', fontSize: 12, fontWeight: 600, margin: 0 }}>All products loaded</p>}
+      <div ref={bottomRef} className="h-24 flex items-center justify-center mt-12">
+        {!hasMore && products.length > 0 && (
+          <div className="neo-border px-6 py-3 text-xs font-bold uppercase tracking-widest text-[var(--muted)]">
+            All products loaded
+          </div>
+        )}
       </div>
-
-      <style>{`@keyframes sc-spin { from { transform:rotate(0deg) } to { transform:rotate(360deg) } }`}</style>
     </div>
   );
 };

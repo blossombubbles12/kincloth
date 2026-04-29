@@ -62,19 +62,9 @@ export default async function ProductPage({ params }: Props) {
   if (!product) notFound();
 
   return (
-    <main
-      style={{
-        height: '100svh',
-        width: '100%',
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        background: 'var(--background)',
-        color: 'var(--foreground)',
-        WebkitOverflowScrolling: 'touch',
-      }}
-    >
+    <>
       <ProductJsonLd product={product} />
       <ProductDetailsView product={product} allProducts={allProducts} />
-    </main>
+    </>
   );
 }

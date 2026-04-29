@@ -2,130 +2,115 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 const slides = [
   {
     id: 1,
-    title: 'New Season Arrivals',
-    subtitle: 'Fresh drops every week. Scroll to discover.',
-    cta: 'Shop Now',
-    gradient: 'from-rose-900 via-red-900 to-black',
-    accent: '#818cf8',
-    badge: 'NEW IN',
+    tag: 'New Season',
+    title: 'Raw Streetwear',
+    sub: 'Unapologetic. Unfiltered. Unyielding.',
+    cta: 'Shop Collection',
+    href: '/shop',
+    image: 'https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=1400&q=80',
   },
   {
     id: 2,
-    title: 'Summer Edit 2026',
-    subtitle: 'Light fabrics. Bold statements. Limited stock.',
-    cta: 'Explore',
-    gradient: 'from-amber-900 via-orange-900 to-black',
-    accent: '#fb923c',
-    badge: 'TRENDING',
+    tag: 'Limited Drop',
+    title: 'The Noir Edit',
+    sub: 'Deep blacks. Hard edges. Zero compromise.',
+    cta: 'View Drop',
+    href: '/drops',
+    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1400&q=80',
   },
   {
     id: 3,
-    title: 'Exclusive Members Deal',
-    subtitle: 'Up to 40% off on selected premium styles.',
-    cta: 'Claim Offer',
-    gradient: 'from-emerald-900 via-teal-900 to-black',
-    accent: '#34d399',
-    badge: 'LIMITED TIME',
+    tag: 'Culture',
+    title: 'Disrupt 2026',
+    sub: 'The culture has no rules. Neither do we.',
+    cta: 'Explore',
+    href: '/shop',
+    image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=1400&q=80',
   },
 ];
 
 export const HeroSlider: React.FC = () => {
   const [current, setCurrent] = useState(0);
-  const [direction, setDirection] = useState(1);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setDirection(1);
-      setCurrent((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(timer);
+    const t = setInterval(() => setCurrent(p => (p + 1) % slides.length), 6000);
+    return () => clearInterval(t);
   }, []);
-
-  const go = (index: number) => {
-    setDirection(index > current ? 1 : -1);
-    setCurrent(index);
-  };
-
-  const prev = () => {
-    setDirection(-1);
-    setCurrent((p) => (p - 1 + slides.length) % slides.length);
-  };
-
-  const next = () => {
-    setDirection(1);
-    setCurrent((p) => (p + 1) % slides.length);
-  };
 
   const slide = slides[current];
 
   return (
-    <div className="relative w-full h-64 md:h-[300px] rounded-2xl overflow-hidden bg-black mb-6 select-none shadow-2xl">
-      <AnimatePresence mode="wait" custom={direction}>
+    <div className="relative w-full overflow-hidden neo-border neo-shadow" style={{ height: 480 }}>
+      <AnimatePresence mode="wait">
         <motion.div
           key={slide.id}
-          custom={direction}
-          variants={{
-            enter: (d: number) => ({ x: d * 60, opacity: 0 }),
-            center: { x: 0, opacity: 1 },
-            exit: (d: number) => ({ x: d * -60, opacity: 0 }),
-          }}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{ duration: 0.45, ease: 'easeInOut' }}
-          className={`absolute inset-0 bg-gradient-to-br ${slide.gradient} flex flex-col justify-center px-10 md:px-16`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
+          className="absolute inset-0 flex"
         >
-          {/* Badge */}
-          <span
-            className="inline-block text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-4 w-fit"
-            style={{ background: slide.accent + '30', color: slide.accent, border: `1px solid ${slide.accent}60` }}
-          >
-            {slide.badge}
-          </span>
-          <h2 className="text-3xl md:text-5xl font-black text-white leading-[1.1] mb-2 tracking-tighter">{slide.title}</h2>
-          <p className="text-sm md:text-base text-white/70 mb-6 max-w-md">{slide.subtitle}</p>
-          <button
-            className="w-fit px-5 py-2 rounded-xl text-sm font-bold text-black transition-transform hover:scale-105 active:scale-95"
-            style={{ background: slide.accent }}
-          >
-            {slide.cta}
-          </button>
+          {/* Left: Text */}
+          <div className="relative z-10 flex flex-col justify-center px-12 md:px-16 w-full md:w-1/2 bg-[var(--background)]">
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em] mb-4 px-3 py-1 border-2 border-[var(--border)] w-fit">
+              {slide.tag}
+            </span>
+            <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.05] mb-4">
+              {slide.title}
+            </h1>
+            <p className="text-sm font-medium text-[var(--muted)] mb-8 max-w-xs leading-relaxed">
+              {slide.sub}
+            </p>
+            <Link href={slide.href} className="neo-button flex items-center gap-3 w-fit group">
+              {slide.cta}
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          {/* Right: Image */}
+          <div className="hidden md:block w-1/2 relative border-l-[3px] border-[var(--border)]">
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="w-full h-full object-cover"
+            />
+            {/* Yellow accent block */}
+            <div className="absolute bottom-0 left-0 w-16 h-16 bg-[#ffff00] border-r-[3px] border-t-[3px] border-[var(--border)]" />
+          </div>
         </motion.div>
       </AnimatePresence>
 
-      {/* Arrows */}
-      <button
-        onClick={prev}
-        className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/40 hover:bg-black/70 rounded-full flex items-center justify-center text-white backdrop-blur-sm transition-colors z-10"
-      >
-        <ChevronLeft size={16} />
-      </button>
-      <button
-        onClick={next}
-        className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/40 hover:bg-black/70 rounded-full flex items-center justify-center text-white backdrop-blur-sm transition-colors z-10"
-      >
-        <ChevronRight size={16} />
-      </button>
-
-      {/* Dots */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+      {/* Slide counter */}
+      <div className="absolute bottom-6 left-12 flex items-center gap-4 z-20">
         {slides.map((_, i) => (
           <button
             key={i}
-            onClick={() => go(i)}
-            className="rounded-full transition-all"
-            style={{
-              width: i === current ? 20 : 6,
-              height: 6,
-              background: i === current ? slide.accent : 'rgba(255,255,255,0.3)',
-            }}
+            onClick={() => setCurrent(i)}
+            className={`h-0.5 transition-all ${i === current ? 'w-8 bg-[var(--foreground)]' : 'w-4 bg-[var(--muted)]'}`}
           />
         ))}
+      </div>
+
+      {/* Arrows */}
+      <div className="absolute bottom-4 right-6 flex gap-2 z-20">
+        <button
+          onClick={() => setCurrent(p => (p - 1 + slides.length) % slides.length)}
+          className="w-10 h-10 neo-border bg-[var(--background)] flex items-center justify-center hover:bg-[#ffff00] transition-colors"
+        >
+          <ChevronLeft size={18} />
+        </button>
+        <button
+          onClick={() => setCurrent(p => (p + 1) % slides.length)}
+          className="w-10 h-10 neo-border bg-[var(--background)] flex items-center justify-center hover:bg-[#ffff00] transition-colors"
+        >
+          <ChevronRight size={18} />
+        </button>
       </div>
     </div>
   );

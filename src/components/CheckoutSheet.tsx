@@ -117,7 +117,7 @@ export const CheckoutSheet: React.FC<CheckoutSheetProps> = ({ isOpen, onClose })
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {step === 1 && (
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-emerald-500 text-sm font-bold uppercase tracking-widest mb-2">
+                  <div className="flex items-center gap-2 text-accent text-sm font-bold uppercase tracking-widest mb-2">
                     <User size={16} /> Shipping Info
                   </div>
                   <input 
@@ -166,7 +166,7 @@ export const CheckoutSheet: React.FC<CheckoutSheetProps> = ({ isOpen, onClose })
 
               {step === 2 && (
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-emerald-500 text-sm font-bold uppercase tracking-widest mb-2">
+                  <div className="flex items-center gap-2 text-accent text-sm font-bold uppercase tracking-widest mb-2">
                     <Truck size={16} /> Delivery Method
                   </div>
                   {shippingOptions.map((opt) => (
@@ -197,8 +197,8 @@ export const CheckoutSheet: React.FC<CheckoutSheetProps> = ({ isOpen, onClose })
 
               {step === 3 && (
                 <div className="space-y-6 text-center py-10">
-                  <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CreditCard className="text-emerald-500" size={32} />
+                  <div className="w-20 h-20 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CreditCard className="text-accent" size={32} />
                   </div>
                   <h3 className="text-2xl font-bold text-foreground">Review & Pay</h3>
                   <p className="text-muted">Your total is <span className="text-foreground font-bold">${totalPrice.toFixed(2)}</span></p>
@@ -211,13 +211,13 @@ export const CheckoutSheet: React.FC<CheckoutSheetProps> = ({ isOpen, onClose })
                   <motion.div 
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="w-24 h-24 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4"
+                    className="w-24 h-24 bg-accent rounded-full flex items-center justify-center mx-auto mb-4"
                   >
-                    <Check className="text-background" size={48} strokeWidth={3} />
+                    <Check className="text-white" size={48} strokeWidth={3} />
                   </motion.div>
                   <h3 className="text-3xl font-bold text-foreground">Thank You!</h3>
                   <p className="text-muted">Your order has been placed successfully.</p>
-                  <p className="text-emerald-500 text-sm font-medium">Redirecting to feed...</p>
+                  <p className="text-accent text-sm font-medium">Redirecting to feed...</p>
                 </div>
               )}
             </div>

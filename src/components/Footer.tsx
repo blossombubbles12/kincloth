@@ -2,28 +2,17 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import {
-  Camera, Send, Video, Globe,
-  Mail, ArrowRight, ShieldCheck, Truck, RefreshCcw,
-  Heart, Zap,
-} from 'lucide-react';
+import { Camera, Send, Video, Globe, ArrowRight, ShieldCheck, Truck, RefreshCcw, Zap } from 'lucide-react';
 
-const SHOP_LINKS = ['New Arrivals', 'Best Sellers', 'Sale', 'Brands', 'Gift Cards'];
-const SUPPORT_LINKS = ['Track Order', 'Returns & Exchanges', 'Size Guide', 'FAQ', 'Contact Us'];
-const COMPANY_LINKS = ['About Us', 'Careers', 'Press', 'Affiliates', 'Privacy Policy'];
+const SHOP_LINKS = ['New Drops', 'Best Sellers', 'Limited Drop', 'Archive', 'Gifts'];
+const SUPPORT_LINKS = ['Track Order', 'Returns', 'Size Guide', 'FAQ', 'Contact'];
+const COMPANY_LINKS = ['About', 'Careers', 'Press', 'Privacy Policy', 'Terms'];
 
 const SOCIALS = [
-  { icon: <Camera size={18} />, href: '#', label: 'Instagram' },
-  { icon: <Send size={18} />, href: '#', label: 'Twitter' },
-  { icon: <Video size={18} />, href: '#', label: 'YouTube' },
-  { icon: <Globe size={18} />, href: '#', label: 'Facebook' },
-];
-
-const TRUST = [
-  { icon: <Truck size={20} />, label: 'Free Shipping', sub: 'On orders over $50' },
-  { icon: <RefreshCcw size={20} />, label: '30-Day Returns', sub: 'Hassle-free policy' },
-  { icon: <ShieldCheck size={20} />, label: 'Secure Checkout', sub: '256-bit encryption' },
-  { icon: <Zap size={20} />, label: 'Fast Delivery', sub: '2–5 business days' },
+  { icon: <Camera size={16} />, href: '#', label: 'Instagram' },
+  { icon: <Send size={16} />, href: '#', label: 'Twitter' },
+  { icon: <Video size={16} />, href: '#', label: 'TikTok' },
+  { icon: <Globe size={16} />, href: '#', label: 'Website' },
 ];
 
 export function Footer() {
@@ -31,194 +20,140 @@ export function Footer() {
   const [subscribed, setSubscribed] = useState(false);
 
   return (
-    <footer style={{
-      borderTop: '1px solid var(--border)',
-      background: 'var(--sidebar)',
-      color: 'var(--foreground)',
-    }}>
+    <footer className="border-t-[3px] border-[var(--border)] bg-[var(--sidebar)] text-[var(--foreground)] mt-16">
 
-      {/* ── Trust Bar ── */}
-      <div style={{
-        borderBottom: '1px solid var(--border)',
-        background: 'var(--card)',
-      }}>
-        <div style={{
-          maxWidth: 1280, margin: '0 auto', padding: '28px 32px',
-          display: 'flex', flexWrap: 'wrap', gap: 24,
-          justifyContent: 'center'
-        }}>
-          {TRUST.map(({ icon, label, sub }) => (
-            <div key={label} style={{
-              display: 'flex', alignItems: 'center', gap: 14,
-              minWidth: 200
-            }}>
-              <div style={{
-                width: 48, height: 48, borderRadius: 14, flexShrink: 0,
-                background: 'rgba(244,63,94,0.1)', border: '1px solid rgba(244,63,94,0.2)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'var(--accent)',
-              }}>
+      {/* Trust Bar */}
+      <div className="border-b-[3px] border-[var(--border)]">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4">
+          {[
+            { icon: <Truck size={18} />, label: 'Fast Shipping', sub: 'Orders ship in 24h' },
+            { icon: <RefreshCcw size={18} />, label: '30-Day Returns', sub: 'Hassle-free policy' },
+            { icon: <ShieldCheck size={18} />, label: 'Secure Checkout', sub: '256-bit encryption' },
+            { icon: <Zap size={18} />, label: 'Drop Alerts', sub: 'Be first to know' },
+          ].map(({ icon, label, sub }, i) => (
+            <div
+              key={label}
+              className={`flex items-center gap-4 px-8 py-6 ${i < 3 ? 'border-r-[2px] border-[var(--border)]' : ''}`}
+            >
+              <div className="w-10 h-10 neo-border flex items-center justify-center bg-[var(--accent)] text-black flex-shrink-0">
                 {icon}
               </div>
               <div>
-                <p style={{ fontSize: 13, fontWeight: 900, color: 'var(--foreground)', margin: 0 }}>{label}</p>
-                <p style={{ fontSize: 11, color: 'var(--muted)', margin: '2px 0 0', fontWeight: 500 }}>{sub}</p>
+                <p className="text-xs font-bold uppercase tracking-widest">{label}</p>
+                <p className="text-xs text-[var(--muted)] mt-0.5">{sub}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ── Main Footer ── */}
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '60px 32px 40px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 48, marginBottom: 60 }}>
+      {/* Main Footer */}
+      <div className="max-w-7xl mx-auto px-8 py-16 grid grid-cols-1 lg:grid-cols-5 gap-12">
 
-          {/* Brand Column */}
-          <div style={{ gridColumn: 'span 2' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-              <div style={{
-                width: 36, height: 36, borderRadius: 10,
-                background: 'linear-gradient(135deg, #f43f5e, #e11d48)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 4px 16px rgba(244,63,94,0.2)',
-              }}>
-                <span style={{ color: '#fff', fontSize: 13, fontWeight: 900 }}>CA</span>
-              </div>
-              <span style={{ fontSize: 17, fontWeight: 900, letterSpacing: '-0.04em', color: 'var(--foreground)' }}>
-                CHI<span style={{ color: 'var(--accent)' }}>ANGEL</span>
-              </span>
-            </div>
+        {/* Brand */}
+        <div className="lg:col-span-2">
+          <Link href="/" className="flex items-center gap-1 group mb-6 w-fit">
+            <span className="text-xl font-black tracking-tight group-hover:bg-[var(--accent)] group-hover:text-black transition-colors px-1">KIN</span>
+            <span className="text-xl font-black tracking-tight group-hover:bg-[var(--accent)] group-hover:text-black transition-colors px-1">CLOTH</span>
+          </Link>
 
-            <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7, maxWidth: 400, marginBottom: 28 }}>
-              Chiangel — Discover curated premium products with a next-generation scroll feed. New drops every week — built for the modern shopper.
-            </p>
-
-            {/* Social links */}
-            <div style={{ display: 'flex', gap: 10, marginBottom: 32 }}>
-              {SOCIALS.map(({ icon, href, label }) => (
-                <a key={label} href={href} aria-label={label} style={{
-                  width: 40, height: 40, borderRadius: 12,
-                  background: 'var(--card)', border: '1px solid var(--border)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: 'var(--muted)', textDecoration: 'none',
-                  transition: 'all 0.2s',
-                }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLElement).style.background = 'var(--accent)';
-                    (e.currentTarget as HTMLElement).style.color = 'var(--accent-foreground)';
-                    (e.currentTarget as HTMLElement).style.borderColor = 'var(--accent)';
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLElement).style.background = 'var(--card)';
-                    (e.currentTarget as HTMLElement).style.color = 'var(--muted)';
-                    (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)';
-                  }}
-                >
-                  {icon}
-                </a>
-              ))}
-            </div>
-
-            {/* Newsletter */}
-            <p style={{ fontSize: 12, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--foreground)', marginBottom: 12 }}>
-              Get Early Access
-            </p>
-            {subscribed ? (
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: 8,
-                padding: '12px 16px', borderRadius: 14,
-                background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)',
-                maxWidth: 300
-              }}>
-                <Heart size={16} style={{ fill: '#22c55e', stroke: 'none' }} />
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#22c55e' }}>You&apos;re on the list!</span>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', gap: 8, maxWidth: 350 }}>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && email && setSubscribed(true)}
-                  placeholder="your@email.com"
-                  style={{
-                    flex: 1, padding: '10px 14px', borderRadius: 12,
-                    background: 'var(--card)', border: '1px solid var(--border)',
-                    color: 'var(--foreground)', fontSize: 13, outline: 'none',
-                  }}
-                />
-                <button
-                  onClick={() => email && setSubscribed(true)}
-                  style={{
-                    width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-                    background: 'linear-gradient(135deg, #f43f5e, #e11d48)',
-                    border: 'none', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}
-                >
-                  <ArrowRight size={18} style={{ color: '#fff' }} />
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Link Columns */}
-          {[
-            { title: 'Shop', links: SHOP_LINKS },
-            { title: 'Support', links: SUPPORT_LINKS },
-            { title: 'Company', links: COMPANY_LINKS },
-          ].map(({ title, links }) => (
-            <div key={title}>
-              <p style={{ fontSize: 11, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--foreground)', marginBottom: 20 }}>
-                {title}
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {links.map(link => (
-                  <Link key={link} href="/shop" style={{
-                    fontSize: 14, color: 'var(--muted)', textDecoration: 'none',
-                    fontWeight: 500, transition: 'color 0.2s',
-                  }}
-                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--foreground)'}
-                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--muted)'}
-                  >
-                    {link}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* ── Bottom Bar ── */}
-        <div style={{
-          paddingTop: 32, borderTop: '1px solid var(--border)',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16,
-        }}>
-          <p style={{ fontSize: 13, color: 'var(--muted)', margin: 0 }}>
-            © {new Date().getFullYear()} Chiangel. All rights reserved.
+          <p className="text-sm text-[var(--muted)] leading-relaxed max-w-xs mb-8">
+            Premium streetwear for the culturally aware. New drops weekly. Built for those who set the standard.
           </p>
 
-          {/* Payment badges */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            {['VISA', 'MC', 'AMEX', 'PAYPAL', 'APPLE PAY'].map(badge => (
-              <div key={badge} style={{
-                padding: '4px 10px', borderRadius: 6,
-                background: 'var(--card)', border: '1px solid var(--border)',
-                fontSize: 9, fontWeight: 900, color: 'var(--muted)',
-                letterSpacing: '0.05em',
-              }}>
-                {badge}
-              </div>
-            ))}
-          </div>
-
-          <div style={{ display: 'flex', gap: 20 }}>
-            {['Terms', 'Privacy', 'Cookies'].map(item => (
-              <a key={item} href="#" style={{ fontSize: 12, color: 'var(--muted)', textDecoration: 'none', fontWeight: 600 }}>
-                {item}
+          <div className="flex gap-3 mb-10">
+            {SOCIALS.map(({ icon, href, label }) => (
+              <a
+                key={label}
+                href={href}
+                aria-label={label}
+                className="w-9 h-9 neo-border flex items-center justify-center text-[var(--muted)] hover:bg-[var(--accent)] hover:text-black transition-colors"
+              >
+                {icon}
               </a>
             ))}
           </div>
+
+          {/* Newsletter */}
+          <p className="text-xs font-bold uppercase tracking-widest mb-3">Get Early Access</p>
+          {subscribed ? (
+            <div className="neo-border px-4 py-3 text-xs font-bold text-[var(--muted)] bg-[var(--card)]">
+              You&apos;re on the list.
+            </div>
+          ) : (
+            <div className="flex gap-0">
+              <input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && email && setSubscribed(true)}
+                placeholder="your@email.com"
+                className="neo-input flex-1 text-xs"
+              />
+              <button
+                onClick={() => email && setSubscribed(true)}
+                className="neo-button flex items-center gap-1 px-4"
+              >
+                <ArrowRight size={14} />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Links */}
+        {[
+          { title: 'Shop', links: SHOP_LINKS },
+          { title: 'Support', links: SUPPORT_LINKS },
+          { title: 'Company', links: COMPANY_LINKS },
+        ].map(({ title, links }) => (
+          <div key={title}>
+            <p className="text-xs font-bold uppercase tracking-widest mb-5 pb-2 border-b-2 border-[var(--border)]">{title}</p>
+            <ul className="space-y-3">
+              {links.map(link => (
+                <li key={link}>
+                  <Link
+                    href={
+                      link === 'About' ? '/about' : 
+                      link === 'Contact' ? '/contact' : 
+                      link === 'Track Order' ? '/track-order' :
+                      link === 'FAQ' ? '/faq' :
+                      link === 'Privacy Policy' ? '/privacy' : 
+                      link === 'Terms' ? '/terms' : 
+                      '/shop'
+                    }
+                    className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--accent)] hover:px-1 transition-all"
+                  >
+                    {link}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="border-t-[3px] border-[var(--border)] max-w-7xl mx-auto px-8 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p className="text-xs text-[var(--muted)]">
+          © {new Date().getFullYear()} Kincloth. All rights reserved.
+        </p>
+        <div className="flex gap-2">
+
+
+          {['VISA', 'MC', 'AMEX', 'PAYPAL'].map(p => (
+            <div key={p} className="neo-border px-2 py-1 text-[10px] font-bold bg-[var(--card)] text-[var(--muted)]">{p}</div>
+          ))}
+        </div>
+        <div className="flex gap-6">
+          {['Terms', 'Privacy', 'Cookies'].map(item => (
+            <Link 
+              key={item} 
+              href={`/${item.toLowerCase()}`} 
+              className="text-xs text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            >
+              {item}
+            </Link>
+          ))}
         </div>
       </div>
     </footer>

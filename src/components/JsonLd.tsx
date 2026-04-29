@@ -13,13 +13,13 @@ export function ProductJsonLd({ product }: ProductJsonLdProps) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    description: product.description || `Premium ${product.name} available at ScrollCommerce.`,
+    description: product.description || `Premium ${product.name} available at Kincloth.`,
     image: product.thumbnail_url
       ? [product.thumbnail_url, ...(product.images || [])]
       : [],
     brand: {
       "@type": "Brand",
-      name: product.brand || "ScrollCommerce",
+      name: product.brand || "Kincloth",
     },
     offers: {
       "@type": "Offer",
@@ -30,7 +30,7 @@ export function ProductJsonLd({ product }: ProductJsonLdProps) {
       availability: "https://schema.org/InStock",
       seller: {
         "@type": "Organization",
-        name: "ScrollCommerce",
+        name: "Kincloth",
       },
       shippingDetails: {
         "@type": "OfferShippingDetails",
@@ -87,7 +87,7 @@ export function OrganizationJsonLd() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "ScrollCommerce",
+    name: "Kincloth",
     url: SITE_URL,
     logo: `${SITE_URL}/icon.svg`,
     description: "Discover curated premium products with a TikTok-style scroll feed.",
@@ -116,7 +116,7 @@ export function WebsiteJsonLd() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "ScrollCommerce",
+    name: "Kincloth",
     url: SITE_URL,
     potentialAction: {
       "@type": "SearchAction",

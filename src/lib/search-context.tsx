@@ -11,16 +11,30 @@ interface SearchContextType {
   suggestions: Product[];
 }
 
-const SearchContext = createContext<SearchContextType | undefined>(undefined);
+// Safe no-op default — means SearchBar works even on pages without a provider
+const defaultContext: SearchContextType = {
+  query: '',
+  setQuery: () => {},
+  recentQueries: [],
+  trackSearch: () => {},
+  suggestions: [],
+};
 
-export const SearchProvider: React.FC<{ children: React.ReactNode; products: Product[] }> = ({ children, products }) => {
+const SearchContext = createContext<SearchContextType>(defaultContext);
+
+export const SearchProvider: React.FC<{ children: React.ReactNode; products: Product[] }> = ({
+  children,
+  products,
+}) => {
   const [query, setQuery] = useState('');
   const [recentQueries, setRecentQueries] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<Product[]>([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem('recent_searches');
-    if (saved) setRecentQueries(JSON.parse(saved));
+    try {
+      const saved = localStorage.getItem('recent_searches');
+      if (saved) setRecentQueries(JSON.parse(saved));
+    } catch {}
   }, []);
 
   const trackSearch = useCallback((q: string) => {
@@ -28,17 +42,20 @@ export const SearchProvider: React.FC<{ children: React.ReactNode; products: Pro
     setRecentQueries(prev => {
       const filtered = prev.filter(item => item !== q);
       const updated = [q, ...filtered].slice(0, 5);
-      localStorage.setItem('recent_searches', JSON.stringify(updated));
+      try { localStorage.setItem('recent_searches', JSON.stringify(updated)); } catch {}
       return updated;
     });
   }, []);
 
   useEffect(() => {
     if (query.length > 1) {
-      const filtered = products.filter(p => 
-        p.name.toLowerCase().includes(query.toLowerCase()) || 
-        p.description?.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, 5);
+      const filtered = products
+        .filter(
+          p =>
+            p.name.toLowerCase().includes(query.toLowerCase()) ||
+            p.description?.toLowerCase().includes(query.toLowerCase())
+        )
+        .slice(0, 5);
       setSuggestions(filtered);
     } else {
       setSuggestions([]);
@@ -52,8 +69,5 @@ export const SearchProvider: React.FC<{ children: React.ReactNode; products: Pro
   );
 };
 
-export const useSearch = () => {
-  const context = useContext(SearchContext);
-  if (!context) throw new Error('useSearch must be used within a SearchProvider');
-  return context;
-};
+// Never throws — safe to call anywhere, even outside a provider
+export const useSearch = () => useContext(SearchContext);

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { Sparkles, ArrowRight, Zap } from 'lucide-react';
+import { Sparkles, RefreshCcw, Cpu } from 'lucide-react';
 import { Product } from '@/lib/types';
 import { useRecentViewed } from '@/lib/recent-viewed-context';
 import { useSearch } from '@/lib/search-context';
@@ -12,48 +12,36 @@ export function PersonalizedSection({ products }: { products: Product[] }) {
   const { recentProducts } = useRecentViewed();
   const { recentQueries } = useSearch();
 
-  // "AI" Recommendation Engine
   const recommendedItems = useMemo(() => {
     if (products.length === 0) return [];
-
-    // If no history, show trending/random picks
     if (recentProducts.length === 0 && recentQueries.length === 0) {
-      return products.slice(4, 8); // Offset from main feed
+      // Default: mix of items if no data yet
+      return products.slice(0, 4);
     }
 
-    // 1. Build User Profile
     const profileBrands = new Set(recentProducts.map(p => p.brand).filter(Boolean));
     const profileKeywords = [
       ...recentProducts.flatMap(p => p.name.toLowerCase().split(' ')),
       ...recentQueries.flatMap(q => q.toLowerCase().split(' '))
     ].filter(k => k.length > 3);
 
-    // 2. Score Catalog
     const scored = products
-      .filter(p => !recentProducts.find(rp => rp.id === p.id)) // Exclude viewed
+      .filter(p => !recentProducts.find(rp => rp.id === p.id))
       .map(p => {
         let score = 0;
-        
-        // Brand affinity
         if (profileBrands.has(p.brand)) score += 15;
-        
-        // Keyword matching
         const text = `${p.name} ${p.description}`.toLowerCase();
         profileKeywords.forEach(k => {
           if (text.includes(k)) score += 3;
         });
-
-        // Decay slightly for very old products if we had timestamps
         return { product: p, score };
       });
 
-    // 3. Rank and Fill
     const top = scored
       .sort((a, b) => b.score - a.score)
       .slice(0, 4)
       .map(s => s.product);
 
-    // Backfill if needed
     if (top.length < 4) {
       const remaining = products.filter(p => !top.find(tp => tp.id === p.id) && !recentProducts.find(rp => rp.id === p.id));
       return [...top, ...remaining.slice(0, 4 - top.length)];
@@ -67,53 +55,64 @@ export function PersonalizedSection({ products }: { products: Product[] }) {
   const isActuallyPersonalized = recentProducts.length > 0 || recentQueries.length > 0;
 
   return (
-    <div style={{ margin: '32px 0 48px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, padding: '0 4px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ 
-            width: 48, height: 48, borderRadius: 16, 
-            background: isActuallyPersonalized ? 'rgba(124,58,237,0.1)' : 'rgba(251,191,36,0.1)', 
-            display: 'flex', alignItems: 'center', justifyContent: 'center' 
-          }}>
-            {isActuallyPersonalized ? (
-              <motion.div
-                animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <Sparkles size={22} className="text-rose-500" />
-              </motion.div>
-            ) : (
-              <Zap size={22} className="text-amber-500 fill-amber-500/20" />
-            )}
+    <div className="my-16 border-[3px] border-[var(--border)] bg-black text-white p-8 md:p-12 relative overflow-hidden group neo-shadow">
+      {/* Background AI grid pattern */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none" style={{
+        backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
+        backgroundSize: '40px 40px'
+      }} />
+      
+      {/* Accent block */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-[#ffff00] translate-x-16 -translate-y-16 rotate-45 group-hover:rotate-90 transition-transform duration-700" />
+
+      <div className="relative z-10">
+        <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-6">
+          <div className="flex items-center gap-5">
+            <div className="w-14 h-14 border-[3px] border-white bg-black flex items-center justify-center">
+              {isActuallyPersonalized ? (
+                <Cpu size={28} className="text-[#ffff00]" />
+              ) : (
+                <Sparkles size={28} className="text-[#ffff00]" />
+              )}
+            </div>
+            <div>
+              <p className="text-[#ffff00] font-black text-[10px] uppercase tracking-[0.2em] mb-1 flex items-center gap-2">
+                <span className="w-2 h-2 bg-[#ffff00] animate-pulse" /> 
+                System Active
+              </p>
+              <h2 className="text-3xl md:text-4xl font-black tracking-tight leading-none uppercase">
+                {isActuallyPersonalized ? 'Tailored Chaos' : 'The Algorithm'}
+              </h2>
+              <p className="font-bold text-xs uppercase tracking-widest opacity-60 mt-2">
+                {isActuallyPersonalized 
+                  ? 'Real-time recommendations mapped to your session' 
+                  : 'Curated cultural movers'
+                }
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 style={{ fontSize: 20, fontWeight: 900, color: 'var(--foreground)', margin: 0, letterSpacing: '-0.02em' }}>
-              {isActuallyPersonalized ? 'Tailored For You' : 'Trending Now'}
-            </h2>
-            <p style={{ fontSize: 13, color: 'var(--muted)', margin: '4px 0 0', fontWeight: 500 }}>
-              {isActuallyPersonalized 
-                ? 'Based on your browsing history and preferences' 
-                : 'Discover our most popular picks this week'
-              }
-            </p>
-          </div>
-        </div>
-        
-        <div style={{ marginLeft: 'auto' }}>
-           <button style={{ 
-            display: 'flex', alignItems: 'center', gap: 8,
-            fontSize: 12, fontWeight: 900, color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer',
-            textTransform: 'uppercase', letterSpacing: '0.05em'
-          }}>
-            Refresh <ArrowRight size={14} />
+          
+          <button className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:text-[#ffff00] transition-colors">
+            <RefreshCcw size={14} /> Refresh Feed
           </button>
         </div>
-      </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24 }}>
-        {recommendedItems.map((product, i) => (
-          <ProductCard key={`personalized-${product.id}`} product={product} index={i} />
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {recommendedItems.map((product, i) => (
+            <motion.div
+              key={`personalized-${product.id}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="bg-black border-[3px] border-white text-white group/card relative overflow-hidden"
+            >
+              {/* Force the product card to have a dark theme specifically for this section */}
+              <div className="dark">
+                <ProductCard product={product} index={i} />
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   );

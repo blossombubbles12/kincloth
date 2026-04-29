@@ -51,7 +51,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, isActive }) =
         >
           <div className="p-3 bg-white/10 backdrop-blur-md rounded-full border border-white/20 transition-transform">
             <Heart 
-              className={isLiked ? "fill-red-500 stroke-red-500" : "stroke-white"} 
+              className={isLiked ? "fill-accent stroke-accent" : "stroke-white"} 
               size={24} 
             />
           </div>
@@ -77,9 +77,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, isActive }) =
             initial={{ opacity: 0, x: -20 }}
             animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="pl-4 border-l-2 border-rose-500/50"
+            className="pl-4 border-l-2 border-accent/50"
           >
-            <span className="px-2 py-1 bg-gradient-to-r from-rose-600 to-red-600 rounded text-[10px] text-white font-black uppercase tracking-widest mb-3 inline-block shadow-lg shadow-rose-500/20">
+            <span className="px-2 py-1 bg-gradient-to-r from-[#C5A059] to-[#8B7344] rounded text-[10px] text-white font-black uppercase tracking-widest mb-3 inline-block shadow-lg shadow-accent/20">
               {product.brand}
             </span>
             <h2 className="text-2xl font-bold text-white mb-2 leading-tight">
@@ -148,7 +148,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, isActive }) =
             transition={{ duration: 0.8 }}
             className="absolute inset-0 flex items-center justify-center pointer-events-none z-50"
           >
-            <Heart className="fill-red-500 stroke-red-500 w-32 h-32 opacity-20" />
+            <Heart className="fill-accent stroke-accent w-32 h-32 opacity-20" />
           </motion.div>
         )}
       </AnimatePresence>

@@ -27,9 +27,9 @@ export function SearchBar() {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-md group">
-      <div className={`relative flex items-center bg-zinc-100 dark:bg-zinc-900 border transition-all rounded-xl overflow-hidden ${isOpen ? 'border-rose-500 ring-2 ring-rose-500/10 shadow-lg' : 'border-zinc-200 dark:border-zinc-800'}`}>
-        <Search className="ml-3 text-zinc-400" size={18} />
+    <div ref={containerRef} className="relative w-full group">
+      <div className={`relative flex items-center bg-white neo-border transition-all ${isOpen ? 'neo-shadow bg-[#ffff00]' : ''}`}>
+        <Search className="ml-4 text-black" size={20} />
         <input
           type="text"
           value={query}
@@ -38,12 +38,12 @@ export function SearchBar() {
             setIsOpen(true);
           }}
           onFocus={() => setIsOpen(true)}
-          placeholder="Search products, brands..."
-          className="w-full bg-transparent px-3 py-2.5 text-sm outline-none text-zinc-900 dark:text-white placeholder:text-zinc-500"
+          placeholder="SEARCH THE CHAOS..."
+          className="w-full bg-transparent px-4 py-3 text-sm font-black outline-none text-black placeholder:text-black placeholder:opacity-30 uppercase tracking-widest"
         />
         {query && (
-          <button onClick={() => setQuery('')} className="mr-2 p-1 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-full">
-            <X size={14} className="text-zinc-400" />
+          <button onClick={() => setQuery('')} className="mr-4 p-1 hover:bg-black hover:text-white transition-colors">
+            <X size={18} />
           </button>
         )}
       </div>
@@ -51,27 +51,28 @@ export function SearchBar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden z-[100]"
+            exit={{ opacity: 0, y: 5 }}
+            transition={{ duration: 0.1 }}
+            className="absolute top-full left-0 right-0 mt-2 bg-white neo-border neo-shadow overflow-hidden z-[100]"
           >
             {/* Suggestions */}
             {suggestions.length > 0 && (
-              <div className="p-2 border-b border-zinc-100 dark:border-zinc-800">
-                <p className="px-3 py-2 text-[10px] font-black text-zinc-400 uppercase tracking-widest">Suggestions</p>
+              <div className="border-b-[4px] border-black">
+                <p className="px-4 py-2 text-[10px] font-black text-black bg-[#f0f0f0] uppercase tracking-widest border-b-2 border-black">SUGGESTIONS</p>
                 {suggestions.map((p) => (
                   <button
                     key={p.id}
                     onClick={() => handleSearch(p.name)}
-                    className="w-full flex items-center gap-3 px-3 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors text-left group"
+                    className="w-full flex items-center gap-4 px-4 py-3 hover:bg-[#ffff00] border-b-2 border-black last:border-0 transition-colors text-left group"
                   >
-                    <div className="w-10 h-10 rounded-lg bg-zinc-200 dark:bg-zinc-800 overflow-hidden flex-shrink-0">
+                    <div className="w-12 h-12 neo-border bg-zinc-200 overflow-hidden flex-shrink-0 group-hover:rotate-2 transition-transform">
                       {p.thumbnail_url && <img src={p.thumbnail_url} alt={p.name} className="w-full h-full object-cover" />}
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-rose-500 transition-colors">{p.name}</p>
-                      <p className="text-[11px] text-zinc-500">${p.price.toFixed(2)}</p>
+                      <p className="text-sm font-black uppercase tracking-tighter">{p.name}</p>
+                      <p className="text-xs font-medium text-[var(--muted)]">${p.price.toFixed(0)}</p>
                     </div>
                   </button>
                 ))}
@@ -80,16 +81,16 @@ export function SearchBar() {
 
             {/* Recent Searches */}
             {recentQueries.length > 0 && (
-              <div className="p-2">
-                <p className="px-3 py-2 text-[10px] font-black text-zinc-400 uppercase tracking-widest">Recent Searches</p>
+              <div className="bg-white">
+                <p className="px-4 py-2 text-[10px] font-black text-black bg-[#f0f0f0] uppercase tracking-widest border-b-2 border-black">RECENTS</p>
                 {recentQueries.map((q) => (
                   <button
                     key={q}
                     onClick={() => handleSearch(q)}
-                    className="w-full flex items-center gap-3 px-3 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors text-left"
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#ffff00] border-b-2 border-black last:border-0 text-left font-black text-xs uppercase"
                   >
-                    <Clock size={14} className="text-zinc-400" />
-                    <span className="text-sm text-zinc-700 dark:text-zinc-300">{q}</span>
+                    <Clock size={14} />
+                    <span>{q}</span>
                   </button>
                 ))}
               </div>
@@ -97,9 +98,9 @@ export function SearchBar() {
 
             {/* Trending / No Results */}
             {suggestions.length === 0 && !query && (
-              <div className="p-4 text-center">
-                <TrendingUp size={24} className="mx-auto text-rose-500 mb-2 opacity-50" />
-                <p className="text-sm text-zinc-500 font-medium">Try searching for "Nike" or "Premium"</p>
+              <div className="p-8 text-center bg-zinc-50">
+                <TrendingUp size={32} className="mx-auto text-black mb-3 opacity-20" />
+                <p className="text-xs font-medium uppercase tracking-widest opacity-40">Try searching for products or brands</p>
               </div>
             )}
           </motion.div>

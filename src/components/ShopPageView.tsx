@@ -1,45 +1,27 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { SearchProvider } from '@/lib/search-context';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Product } from '@/lib/types';
 import { ProductCard, useInfiniteProducts } from './DesktopFeed';
 import { LeftSidebar } from './LeftSidebar';
 import { RightSidebar } from './RightSidebar';
-import { CartDrawer } from './CartDrawer';
-import { CheckoutSheet } from './CheckoutSheet';
-import { ThemeToggle } from './ThemeToggle';
-import { SearchBar } from './SearchBar';
 import { 
-  Heart, SlidersHorizontal, LayoutGrid, List, ChevronDown, 
-  X, Loader2, Zap, ShoppingBag 
+  SlidersHorizontal, LayoutGrid, List, ChevronDown, 
+  X 
 } from 'lucide-react';
-import { useFavourites } from '@/lib/favourites-context';
-import { MobileView } from './MobileView';
-import { Footer } from './Footer';
-import Link from 'next/link';
 import { ProductCardSkeleton } from './Skeleton';
+import { MainLayout } from './MainLayout';
 
 interface Props {
   initialProducts: Product[];
 }
 
 export function ShopPageView({ initialProducts }: Props) {
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const { count: favCount } = useFavourites();
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   
   // Use the infinite products hook to get the actual product list
   const { products: allProducts, isLoadingMore, hasMore, bottomRef } = useInfiniteProducts(initialProducts);
-
-  const [isMobile, setIsMobile] = useState(false);
-  
-  React.useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   // Shop specific state
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
@@ -83,78 +65,174 @@ export function ShopPageView({ initialProducts }: Props) {
   };
 
   return (
-    <SearchProvider products={allProducts}>
-      <style>{`
-        .sc-mobile-only  { display: block; }
-        .sc-desktop-only { display: none; }
-        @media (min-width: 1024px) {
-          .sc-mobile-only  { display: none !important; }
-          .sc-desktop-only { display: flex !important; }
-        }
-      `}</style>
-
+    <MainLayout products={allProducts}>
       {/* ── MOBILE VIEW ── */}
       <div className="sc-mobile-only">
-        <MobileView title="Shop" onOpenCart={() => setIsCartOpen(true)}>
-          {/* Mobile Filter Bar */}
-          <div style={{
-            position: 'sticky', top: 0, zIndex: 20,
-            background: 'var(--header-bg)', backdropFilter: 'blur(10px)',
-            borderBottom: '1px solid var(--border)',
-            padding: '12px 16px',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: 4 }}>
+        {/* ── Filter Bar ── */}
+        <div className="sticky top-0 z-20 bg-[var(--header-bg)] border-b-[3px] border-[var(--border)]">
+          <div className="flex items-center gap-2 px-4 py-3 overflow-x-auto hide-scrollbar">
+            <button
+              onClick={() => setIsFilterOpen(true)}
+              className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 neo-border text-xs font-bold uppercase tracking-widest transition-colors ${
+                priceRanges.length > 0 ? 'bg-[var(--accent)] text-black' : 'bg-[var(--card)] hover:bg-[var(--accent)] hover:text-black'
+              }`}
+            >
+              <SlidersHorizontal size={12} /> Filter{priceRanges.length > 0 ? ` (${priceRanges.length})` : ''}
+            </button>
+            {['All', ...Array.from(new Set(allProducts.map(p => p.category).filter(Boolean)))].map(cat => (
               <button
-                onClick={() => setPriceRanges([])}
-                style={{
-                  flexShrink: 0, display: 'flex', alignItems: 'center', gap: 6,
-                  padding: '8px 16px', borderRadius: 10, background: 'var(--card)',
-                  border: '1px solid var(--border)', fontSize: 13, fontWeight: 700,
-                  color: 'var(--foreground)',
-                }}
+                key={cat}
+                onClick={() => setSelectedCategory(cat as string)}
+                className={`flex-shrink-0 px-3 py-2 neo-border text-xs font-bold uppercase tracking-widest transition-colors whitespace-nowrap ${
+                  selectedCategory === cat
+                    ? 'bg-[var(--foreground)] text-[var(--background)]'
+                    : 'bg-[var(--card)] text-[var(--muted)] hover:border-[var(--accent)]'
+                }`}
               >
-                <SlidersHorizontal size={14} /> Filters
+                {cat}
               </button>
-              {['All', ...Array.from(new Set(allProducts.map(p => p.category).filter(Boolean)))].map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  style={{
-                    flexShrink: 0, padding: '8px 16px', borderRadius: 10,
-                    background: selectedCategory === cat ? 'var(--foreground)' : 'var(--card)',
-                    border: `1px solid ${selectedCategory === cat ? 'var(--foreground)' : 'var(--border)'}`,
-                    fontSize: 13, fontWeight: 700, 
-                    color: selectedCategory === cat ? 'var(--background)' : 'var(--muted)',
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {filteredProducts.map((product, i) => (
-              <ProductCard
-                key={`${product.id}-${i}`}
-                product={product}
-                index={i}
-                mobile={true}
-              />
             ))}
-            {isLoadingMore && [1,2,3].map(n => <ProductCardSkeleton key={`skeleton-${n}`} mobile />)}
           </div>
-          <div ref={bottomRef} style={{ height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            {!hasMore && filteredProducts.length > 0 && <p style={{ color: 'var(--muted)', fontSize: 12, fontWeight: 600 }}>End of Catalog</p>}
-          </div>
-          <Footer />
-        </MobileView>
+        </div>
+
+        {/* ── Sort Row ── */}
+        <div className="flex items-center justify-between px-4 py-3 border-b-[3px] border-[var(--border)]">
+          <span className="text-xs text-[var(--muted)] font-medium">
+            <span className="font-black text-[var(--foreground)]">{filteredProducts.length}</span> products
+          </span>
+          <select
+            value={sortBy}
+            onChange={e => setSortBy(e.target.value)}
+            className="text-xs font-bold uppercase tracking-widest bg-[var(--card)] neo-border px-3 py-1.5 outline-none cursor-pointer"
+          >
+            <option value="featured">Featured</option>
+            <option value="newest">Newest</option>
+            <option value="price-low">Price ↑</option>
+            <option value="price-high">Price ↓</option>
+          </select>
+        </div>
+
+        {/* ── Product Grid ── */}
+        <div className="p-4 grid grid-cols-2 gap-3">
+          {filteredProducts.map((product, i) => (
+            <ProductCard
+              key={`${product.id}-${i}`}
+              product={product}
+              index={i}
+            />
+          ))}
+          {isLoadingMore && [1, 2, 3, 4].map(n => <ProductCardSkeleton key={`skeleton-${n}`} />)}
+        </div>
+
+        {/* ── End sentinel ── */}
+        <div ref={bottomRef} className="h-16 flex items-center justify-center">
+          {!hasMore && filteredProducts.length > 0 && (
+            <p className="text-xs text-[var(--muted)] font-bold uppercase tracking-widest">All products loaded</p>
+          )}
+        </div>
+
+        {/* ── Filter Drawer (slide-up) ── */}
+        <AnimatePresence>
+          {isFilterOpen && (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsFilterOpen(false)}
+                className="fixed inset-0 z-[90] bg-black/60"
+              />
+              {/* Panel */}
+              <motion.div
+                initial={{ y: '100%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 28, stiffness: 240 }}
+                className="fixed bottom-0 left-0 right-0 z-[100] bg-[var(--background)] border-t-[3px] border-[var(--border)] flex flex-col"
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between px-5 py-4 border-b-[3px] border-[var(--border)]">
+                  <span className="text-sm font-black uppercase tracking-widest">Filter</span>
+                  <div className="flex gap-2">
+                    {(priceRanges.length > 0) && (
+                      <button
+                        onClick={() => setPriceRanges([])}
+                        className="text-xs font-bold uppercase tracking-widest px-3 py-1.5 neo-border bg-[var(--accent)] text-black"
+                      >
+                        Clear
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setIsFilterOpen(false)}
+                      className="w-9 h-9 neo-border bg-[var(--card)] flex items-center justify-center hover:bg-[var(--accent)] hover:text-black transition-colors"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Body */}
+                <div className="p-5 flex flex-col gap-6 overflow-y-auto max-h-[70vh]">
+                  {/* Price Range */}
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-widest mb-4 pb-2 border-b-2 border-[var(--border)]">Price Range</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {['Under $50', '$50 - $100', '$100 - $200', 'Over $200'].map(range => (
+                        <button
+                          key={range}
+                          onClick={() => togglePriceRange(range)}
+                          className={`px-3 py-3 neo-border text-xs font-bold uppercase tracking-wide text-left transition-colors ${
+                            priceRanges.includes(range)
+                              ? 'bg-[var(--accent)] text-black border-[var(--accent)]'
+                              : 'bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--accent)]'
+                          }`}
+                        >
+                          {priceRanges.includes(range) ? '✓ ' : ''}{range}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Category */}
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-widest mb-4 pb-2 border-b-2 border-[var(--border)]">Category</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {['All', ...Array.from(new Set(allProducts.map(p => p.category).filter(Boolean)))].map(cat => (
+                        <button
+                          key={cat}
+                          onClick={() => setSelectedCategory(cat as string)}
+                          className={`px-3 py-3 neo-border text-xs font-bold uppercase tracking-wide text-left transition-colors ${
+                            selectedCategory === cat
+                              ? 'bg-[var(--foreground)] text-[var(--background)]'
+                              : 'bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--accent)]'
+                          }`}
+                        >
+                          {selectedCategory === cat ? '✓ ' : ''}{cat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Apply */}
+                <div className="p-4 border-t-[3px] border-[var(--border)]">
+                  <button
+                    onClick={() => setIsFilterOpen(false)}
+                    className="w-full neo-button py-3 text-sm font-black uppercase tracking-widest"
+                  >
+                    Show {filteredProducts.length} Results
+                  </button>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ── DESKTOP VIEW ── */}
       <div className="sc-desktop-only" style={{ 
-        height: '100svh', 
+        height: 'calc(100vh - 72px)', // Substract header height
         width: '100%', 
         overflow: 'hidden', 
         background: 'var(--background)',
@@ -162,73 +240,6 @@ export function ShopPageView({ initialProducts }: Props) {
         flexDirection: 'column'
       }}>
         
-        {/* ── Shop Header ── */}
-        <header style={{
-          flexShrink: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '12px 32px',
-          borderBottom: '1px solid var(--border)',
-          background: 'var(--header-bg)',
-          backdropFilter: 'blur(20px)',
-          zIndex: 50,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-              <div style={{
-                width: 34, height: 34, borderRadius: 10,
-                background: 'linear-gradient(135deg, #f43f5e, #e11d48)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <span style={{ color: 'var(--accent-foreground)', fontSize: 11, fontWeight: 900 }}>CA</span>
-              </div>
-              <span style={{ color: 'var(--foreground)', fontSize: 17, fontWeight: 900, letterSpacing: '-0.04em' }}>
-                CHI<span style={{ color: 'var(--accent)' }}>ANGEL</span>
-              </span>
-            </Link>
-            <div style={{ width: 1, height: 24, background: 'var(--border)', margin: '0 8px' }} />
-            <h1 style={{ fontSize: 18, fontWeight: 800, color: 'var(--foreground)', margin: 0 }}>The Shop</h1>
-          </div>
-
-          <div style={{ flex: 1, maxWidth: 500, margin: '0 40px' }}>
-            <SearchBar />
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <ThemeToggle />
-            <Link href="/favourites" style={{
-              position: 'relative', width: 40, height: 40, borderRadius: 12,
-              background: 'var(--card)', border: '1px solid var(--border)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              textDecoration: 'none', color: 'var(--foreground)',
-            }}>
-              <Heart size={18} style={{ stroke: 'var(--foreground)' }} />
-              {favCount > 0 && (
-                <span style={{
-                  position: 'absolute', top: -4, right: -4,
-                  minWidth: 18, height: 18, borderRadius: 9,
-                  background: '#ef4444', color: '#fff',
-                  fontSize: 10, fontWeight: 900,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  padding: '0 4px', border: '2px solid var(--background)',
-                }}>
-                  {favCount}
-                </span>
-              )}
-            </Link>
-            <button 
-              onClick={() => setIsCartOpen(true)}
-              style={{
-                padding: '10px 20px', background: 'var(--foreground)', color: 'var(--background)',
-                border: 'none', borderRadius: 12, fontWeight: 800, fontSize: 13, cursor: 'pointer',
-              }}
-            >
-              Bag
-            </button>
-          </div>
-        </header>
-
         {/* ── Main Shop Content ── */}
         <div style={{
           flex: 1,
@@ -247,7 +258,7 @@ export function ShopPageView({ initialProducts }: Props) {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <SlidersHorizontal size={18} className="text-rose-500" />
+                <SlidersHorizontal size={18} style={{ color: 'var(--accent)' }} />
                 <span style={{ fontSize: 14, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Refine</span>
               </div>
               {(priceRanges.length > 0) && (
@@ -423,16 +434,13 @@ export function ShopPageView({ initialProducts }: Props) {
             padding: 20,
             background: 'var(--sidebar)',
           }}>
-            <RightSidebar onOpenCart={() => setIsCartOpen(true)} />
+            <RightSidebar onOpenCart={() => {}} />
           </div>
 
         </div>
       </div>
-
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} onCheckout={() => { setIsCartOpen(false); setIsCheckoutOpen(true); }} />
-      <CheckoutSheet isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
       
       <style>{`@keyframes sc-spin { from { transform:rotate(0deg) } to { transform:rotate(360deg) } }`}</style>
-    </SearchProvider>
+    </MainLayout>
   );
 }

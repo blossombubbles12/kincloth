@@ -2,29 +2,20 @@
 
 import React, { useState } from 'react';
 import {
-  ShoppingBag, Heart, ShieldCheck, Truck, RefreshCcw,
-  Star, ChevronRight, Share2, ArrowLeft, Minus, Plus,
-  Check, Zap
+  ShoppingBag, Heart, Star, ChevronRight, Share2, Minus, Plus,
+  Check, Zap, ShieldCheck, Truck, RefreshCcw
 } from 'lucide-react';
 import { Product } from '@/lib/types';
 import { useCart } from '@/lib/cart-context';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProductCard } from './DesktopFeed';
 import { ProductCardSkeleton } from './Skeleton';
-import { ThemeToggle } from './ThemeToggle';
-import { SearchBar } from './SearchBar';
-import { SearchProvider } from '@/lib/search-context';
-import { CartDrawer } from './CartDrawer';
-import { CheckoutSheet } from './CheckoutSheet';
-import { ProductJsonLd } from './JsonLd';
 import { useToast } from './ToastContainer';
 import { useHeartBurst } from './HeartAnimation';
 import { useFavourites } from '@/lib/favourites-context';
-import { Footer } from './Footer';
-import { MobileView } from './MobileView';
+import { MainLayout } from './MainLayout';
 import Link from 'next/link';
 
-// ─── Static review data ─────────────────────────────────────────────────────
 const REVIEWS = [
   { name: 'Alex M.', rating: 5, date: '3 days ago', body: 'Absolutely premium quality. The packaging was immaculate and delivery was lightning fast.' },
   { name: 'Jordan K.', rating: 5, date: '1 week ago', body: 'Exceeded my expectations. Fits perfectly and the material feels incredibly durable.' },
@@ -33,9 +24,9 @@ const REVIEWS = [
 
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 const COLORS = [
-  { label: 'Midnight Black', hex: '#000000' },
-  { label: 'Arctic White', hex: '#f4f4f5' },
-  { label: 'Violet Storm', hex: '#7c3aed' },
+  { label: 'Onyx Black', hex: '#0a0a0a' },
+  { label: 'Ivory Silk', hex: '#fdfbf7' },
+  { label: 'Sahara Sand', hex: '#C5A059' },
 ];
 
 interface Props {
@@ -43,18 +34,8 @@ interface Props {
   allProducts: Product[];
 }
 
-// ─── Inner view (needs useCart, so must be client) ──────────────────────────
 function PDPInner({ product, allProducts }: Props) {
-  const [isMobile, setIsMobile] = React.useState(false);
-  
-  React.useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const { addToCart, isLoading, isCartOpen, setIsCartOpen } = useCart();
+  const { addToCart, isLoading, setIsCartOpen } = useCart();
   const { addToast } = useToast();
   const { toggleFavourite, isFavourite } = useFavourites();
   const { burst } = useHeartBurst();
@@ -65,14 +46,12 @@ function PDPInner({ product, allProducts }: Props) {
   const [qty, setQty] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
-  const [isCheckoutOpenLocal, setIsCheckoutOpenLocal] = useState(false);
 
   const galleryImages = [
     product.thumbnail_url,
     ...(product.images || []),
     'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
     'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80',
-    'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80',
   ].filter(Boolean).slice(0, 4) as string[];
 
   const [activeImage, setActiveImage] = useState(galleryImages[0]);
@@ -81,7 +60,6 @@ function PDPInner({ product, allProducts }: Props) {
   const handleAddToCart = async () => {
     if (isAdding || isAdded) return;
     
-    // Find matching variant
     const variant = product.variants?.find(v => {
       const hasSize = v.options?.some((opt: any) => opt.value === selectedSize);
       const hasColor = v.options?.some((opt: any) => opt.value === selectedColor.label);
@@ -90,362 +68,218 @@ function PDPInner({ product, allProducts }: Props) {
 
     setIsAdding(true);
     await addToCart(product, variant?.id);
+    setIsAdding(false);
     setIsAdded(true);
-    setTimeout(() => {
-      setIsAdded(false);
-      setIsCartOpen(true);
-    }, 1500);
+    setTimeout(() => setIsAdded(false), 2000);
     addToast(`${product.name.toUpperCase()} ADDED TO BAG`, 'success');
   };
 
-  const avgRating = 4.9;
   const discountedPrice = (product.price * 1.4).toFixed(2);
 
   return (
-    <div style={{ minHeight: '100%', background: 'var(--background)', color: 'var(--foreground)' }}>
-      <style>{`
-        .sc-mobile-only  { display: block; }
-        .sc-desktop-only { display: none; }
-        @media (min-width: 1024px) {
-          .sc-mobile-only  { display: none !important; }
-          .sc-desktop-only { display: block !important; }
-        }
-      `}</style>
-
-      {/* ── MOBILE VIEW ── */}
-      <div className="sc-mobile-only">
-        <MobileView showBack onOpenCart={() => setIsCartOpen(true)}>
-          <div style={{ padding: '0 0 40px' }}>
-            <div style={{ position: 'relative', aspectRatio: '4/5', background: 'var(--card)' }}>
-              <img src={activeImage} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              <div style={{ position: 'absolute', top: 16, right: 16 }}>
-                <button
-                  onClick={() => toggleFavourite(product)}
-                  style={{
-                    width: 44, height: 44, borderRadius: '50%',
-                    background: 'var(--header-bg)', backdropFilter: 'blur(12px)',
-                    border: '1px solid var(--border)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}
-                >
-                  <Heart size={18} style={{ fill: isLiked ? '#ef4444' : 'none', stroke: isLiked ? '#ef4444' : 'var(--foreground)' }} />
-                </button>
-              </div>
-            </div>
-
-            <div style={{ padding: '24px 20px' }}>
-              <span style={{ color: 'var(--accent)', fontSize: 12, fontWeight: 900 }}>{product.brand}</span>
-              <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: 8 }}>{product.name}</h1>
-              {/* Variations */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 20, marginBottom: 24 }}>
-                <div>
-                  <span style={{ fontSize: 12, fontWeight: 900, textTransform: 'uppercase', color: 'var(--foreground)', display: 'block', marginBottom: 12 }}>
-                    Color: <span style={{ color: 'var(--muted)', fontWeight: 600 }}>{selectedColor.label}</span>
-                  </span>
-                  <div style={{ display: 'flex', gap: 10 }}>
-                    {COLORS.map(color => (
-                      <motion.button
-                        key={color.hex}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => setSelectedColor(color)}
-                        style={{
-                          width: 32, height: 32, borderRadius: '50%',
-                          background: color.hex,
-                          border: selectedColor.hex === color.hex ? '3px solid var(--accent)' : '2px solid var(--border)',
-                          padding: 0, cursor: 'pointer', transition: 'all 0.2s'
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <span style={{ fontSize: 12, fontWeight: 900, textTransform: 'uppercase', color: 'var(--foreground)', display: 'block', marginBottom: 12 }}>Size</span>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    {SIZES.map(size => (
-                      <motion.button
-                        key={size}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setSelectedSize(size)}
-                        style={{
-                          width: 48, height: 48, borderRadius: 12,
-                          background: selectedSize === size ? 'var(--foreground)' : 'var(--card)',
-                          color: selectedSize === size ? 'var(--background)' : 'var(--foreground)',
-                          border: `1px solid ${selectedSize === size ? 'var(--foreground)' : 'var(--border)'}`,
-                          fontWeight: 800, fontSize: 13, cursor: 'pointer'
-                        }}
-                      >
-                        {size}
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: 12, marginBottom: 32 }}>
-                <motion.button
-                  whileTap={{ scale: 0.92 }}
-                  onClick={(e) => {
-                    burst(e.clientX, e.clientY);
-                    handleAddToCart();
-                  }}
-                  disabled={isLoading || isAdding || isAdded}
-                  style={{
-                    flex: 1, padding: '16px', borderRadius: 16,
-                    background: isAdded ? '#22c55e' : 'var(--foreground)',
-                    color: isAdded ? '#fff' : 'var(--background)', fontWeight: 900, border: 'none',
-                    fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-                    transition: 'all 0.2s',
-                    boxShadow: isAdded ? '0 8px 24px rgba(34,197,94,0.3)' : '0 8px 24px rgba(0,0,0,0.1)',
-                    cursor: (isLoading || isAdding || isAdded) ? 'not-allowed' : 'pointer',
-                    opacity: isAdding ? 0.7 : 1
-                  }}
-                >
-                  {isAdded ? <Check size={20} /> : <ShoppingBag size={20} />}
-                  {isAdding ? 'Adding...' : isAdded ? 'Added to Bag' : 'Add to Bag'}
-                </motion.button>
-
-                <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={(e) => {
-                e.preventDefault();
-                if (!isLiked) burst(e.clientX, e.clientY);
-                toggleFavourite(product);
-                addToast(isLiked ? 'Removed from Wishlist' : 'Added to Wishlist!', isLiked ? 'info' : 'success');
-              }}
-              style={{
-                width: 56, height: 56, borderRadius: 18,
-                background: isLiked ? 'rgba(244,63,94,0.1)' : 'var(--card)',
-                border: `1px solid ${isLiked ? 'var(--accent)' : 'var(--border)'}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer',
-              }}
-            >
-              <Heart size={22} style={{ fill: isLiked ? 'var(--accent)' : 'none', stroke: isLiked ? 'var(--accent)' : 'var(--foreground)' }} />
-            </motion.button>
-              </div>
-
-              <div style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.6 }}>
-                {product.description}
-              </div>
-            </div>
-          </div>
-        </MobileView>
+    <div className="flex flex-col w-full bg-[var(--background)]">
+      {/* ── Breadcrumbs (Desktop) ── */}
+      <div className="hidden lg:block border-b-2 border-[var(--border)] bg-[var(--card)]">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[var(--muted)]">
+          <Link href="/" className="hover:text-[var(--foreground)] transition-colors">Home</Link>
+          <ChevronRight size={12} />
+          <Link href="/shop" className="hover:text-[var(--foreground)] transition-colors">Shop</Link>
+          <ChevronRight size={12} />
+          <span className="text-[var(--foreground)]">{product.name}</span>
+        </div>
       </div>
 
-      {/* ── DESKTOP VIEW ── */}
-      <div className="sc-desktop-only">
-        <header style={{
-          position: 'sticky', top: 0, zIndex: 50,
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '12px 32px', borderBottom: '1px solid var(--border)',
-          background: 'var(--header-bg)', backdropFilter: 'blur(20px)',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <Link href="/" style={{
-              display: 'flex', alignItems: 'center', gap: 8,
-              color: 'var(--muted)', fontSize: 13, fontWeight: 700,
-              textDecoration: 'none', padding: '8px 12px',
-              borderRadius: 10, border: '1px solid var(--border)', background: 'var(--card)',
-            }}>
-              <ArrowLeft size={16} /> Back to Store
-            </Link>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg, #f43f5e, #e11d48)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ color: '#fff', fontSize: 10, fontWeight: 900 }}>CA</span>
-              </div>
-              <span style={{ color: 'var(--foreground)', fontSize: 16, fontWeight: 900, letterSpacing: '-0.04em' }}>CHI<span style={{ color: 'var(--accent)' }}>ANGEL</span></span>
-            </div>
-          </div>
-          <div style={{ flex: 1, maxWidth: 400, margin: '0 32px' }}><SearchBar /></div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <ThemeToggle />
-            <button onClick={() => setIsCartOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 12, background: 'var(--foreground)', color: 'var(--background)', border: 'none', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
-              <ShoppingBag size={16} /> View Bag
-            </button>
-          </div>
-        </header>
-
-        <div style={{ padding: '16px 32px', borderBottom: '1px solid var(--border)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--muted)' }}>
-            <Link href="/" style={{ color: 'var(--muted)', textDecoration: 'none', fontWeight: 600 }}>Home</Link>
-            <ChevronRight size={12} />
-            <Link href="/shop" style={{ color: 'var(--muted)', textDecoration: 'none', fontWeight: 600 }}>Shop</Link>
-            <ChevronRight size={12} />
-            <span style={{ color: 'var(--foreground)', fontWeight: 700 }}>{product.name}</span>
-          </div>
-        </div>
-
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '40px 32px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64 }}>
-          {/* Left: Gallery */}
-          <div>
-            <motion.div
-              key={activeImage}
-              initial={{ opacity: 0, scale: 1.02 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
-              style={{ aspectRatio: '4/5', borderRadius: 24, overflow: 'hidden', background: 'var(--card)', border: '1px solid var(--border)', position: 'relative', marginBottom: 16 }}
-            >
-              <img src={activeImage} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              <div style={{ position: 'absolute', top: 16, right: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => toggleFavourite(product)} style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--header-bg)', backdropFilter: 'blur(12px)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                  <Heart size={18} style={{ fill: isLiked ? '#ef4444' : 'none', stroke: isLiked ? '#ef4444' : 'var(--foreground)' }} />
-                </motion.button>
-                <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--header-bg)', backdropFilter: 'blur(12px)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                  <Share2 size={18} style={{ stroke: 'var(--foreground)' }} />
-                </motion.button>
-              </div>
-            </motion.div>
-            <div style={{ display: 'flex', gap: 12 }}>
-              {galleryImages.map((img, i) => (
-                <motion.button key={i} whileHover={{ scale: 1.05 }} onClick={() => setActiveImage(img)} style={{ width: 80, height: 80, borderRadius: 14, overflow: 'hidden', border: `2px solid ${activeImage === img ? 'var(--accent)' : 'var(--border)'}`, opacity: activeImage === img ? 1 : 0.6, cursor: 'pointer', background: 'var(--card)' }}>
-                  <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </motion.button>
-              ))}
-            </div>
-          </div>
-
-          {/* Right: Info Panel */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#fbbf2415', padding: '4px 12px', borderRadius: 20, border: '1px solid #fbbf2430' }}>
-                {[1,2,3,4,5].map(s => <Star key={s} size={13} style={{ fill: '#fbbf24', stroke: 'none' }} />)}
-                <span style={{ fontSize: 12, fontWeight: 900, color: '#fbbf24' }}>4.9</span>
-              </div>
-              <span style={{ color: 'var(--accent)', fontSize: 12, fontWeight: 700 }}>{product.brand || 'CHIANGEL'}</span>
-            </div>
-            <h1 style={{ fontSize: 42, fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1.05, margin: 0 }}>{product.name}</h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
-                <span style={{ fontSize: 32, fontWeight: 900 }}>${product.price.toFixed(2)}</span>
-                <span style={{ fontSize: 18, color: 'var(--muted)', textDecoration: 'line-through' }}>${discountedPrice}</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4, background: '#22c55e15', padding: '4px 10px', borderRadius: 8, border: '1px solid #22c55e30' }}>
-                <Zap size={12} style={{ fill: '#22c55e', stroke: 'none' }} />
-                <span style={{ fontSize: 11, fontWeight: 900, color: '#22c55e' }}>YOU SAVE ${(parseFloat(discountedPrice) - product.price).toFixed(2)}</span>
-              </div>
-            </div>
-
-            {/* Variations */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: '24px 0', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
-              <div>
-                <span style={{ fontSize: 13, fontWeight: 900, textTransform: 'uppercase', color: 'var(--foreground)', display: 'block', marginBottom: 16 }}>
-                  Select Color: <span style={{ color: 'var(--muted)', fontWeight: 600 }}>{selectedColor.label}</span>
-                </span>
-                <div style={{ display: 'flex', gap: 12 }}>
-                  {COLORS.map(color => (
-                    <motion.button
-                      key={color.hex}
-                      whileHover={{ scale: 1.15 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => setSelectedColor(color)}
-                      style={{
-                        width: 40, height: 40, borderRadius: '50%',
-                        background: color.hex,
-                        border: selectedColor.hex === color.hex ? '4px solid var(--accent)' : '2px solid var(--border)',
-                        padding: 0, cursor: 'pointer', transition: 'all 0.2s',
-                        boxShadow: selectedColor.hex === color.hex ? '0 0 0 2px var(--background), 0 0 0 4px var(--accent)' : 'none'
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <span style={{ fontSize: 13, fontWeight: 900, textTransform: 'uppercase', color: 'var(--foreground)', display: 'block', marginBottom: 16 }}>Select Size</span>
-                <div style={{ display: 'flex', gap: 10 }}>
-                  {SIZES.map(size => (
-                    <motion.button
-                      key={size}
-                      whileHover={{ y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setSelectedSize(size)}
-                      style={{
-                        width: 60, height: 60, borderRadius: 16,
-                        background: selectedSize === size ? 'var(--foreground)' : 'var(--card)',
-                        color: selectedSize === size ? 'var(--background)' : 'var(--foreground)',
-                        border: `2px solid ${selectedSize === size ? 'var(--foreground)' : 'var(--border)'}`,
-                        fontWeight: 900, fontSize: 14, cursor: 'pointer', transition: 'all 0.2s'
-                      }}
-                    >
-                      {size}
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: '8px 16px' }}>
-                <button onClick={() => setQty(Math.max(1, qty - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--foreground)' }}><Minus size={18} /></button>
-                <span style={{ fontSize: 16, fontWeight: 800, minWidth: 20, textAlign: 'center' }}>{qty}</span>
-                <button onClick={() => setQty(qty + 1)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--foreground)' }}><Plus size={18} /></button>
-              </div>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
+      <div className="max-w-7xl mx-auto w-full px-4 md:px-6 py-8 lg:py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+        
+        {/* ── Left: Gallery ── */}
+        <div className="space-y-6">
+          <motion.div 
+            layoutId={`product-image-${product.id}`}
+            className="aspect-[4/5] neo-border bg-[var(--card)] neo-shadow relative overflow-hidden group"
+          >
+            <img 
+              src={activeImage} 
+              alt={product.name} 
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute top-4 right-4 flex flex-col gap-3">
+              <button
                 onClick={(e) => {
                   burst(e.clientX, e.clientY);
-                  handleAddToCart();
+                  toggleFavourite(product);
                 }}
-                disabled={isLoading || isAdded}
-                style={{ flex: 1, height: 56, borderRadius: 16, background: isAdded ? '#22c55e' : 'var(--foreground)', color: isAdded ? '#fff' : 'var(--background)', fontWeight: 900, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: isAdded ? '0 8px 24px rgba(34,197,94,0.3)' : '0 8px 32px rgba(0,0,0,0.1)' }}>
-                {isAdded ? <Check size={20} /> : <ShoppingBag size={20} />}
-                {isAdded ? 'Added to Bag' : 'Add to Bag'}
-              </motion.button>
+                className={`w-12 h-12 neo-border flex items-center justify-center transition-colors ${isLiked ? 'bg-[var(--accent)] text-black' : 'bg-white text-black hover:bg-[var(--accent)]'}`}
+              >
+                <Heart size={20} fill={isLiked ? 'currentColor' : 'none'} />
+              </button>
             </div>
-            <p style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--muted)', margin: 0 }}>{product.description}</p>
-          </div>
-        </div>
-      </div>
+          </motion.div>
 
-      {/* ── SHARED CONTENT (Reviews & Footer) ── */}
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '60px 20px' }}>
-        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 60 }}>
-          <h2 style={{ fontSize: 28, fontWeight: 900, marginBottom: 32 }}>Customer Reviews</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24 }}>
-            {REVIEWS.map((review, i) => (
-              <div key={i} style={{ padding: 24, borderRadius: 20, background: 'var(--card)', border: '1px solid var(--border)' }}>
-                <div style={{ display: 'flex', gap: 4, marginBottom: 12 }}>
-                  {Array.from({ length: review.rating }).map((_, s) => <Star key={s} size={14} style={{ fill: '#fbbf24', stroke: 'none' }} />)}
-                </div>
-                <p style={{ fontSize: 14, lineHeight: 1.6, marginBottom: 16 }}>"{review.body}"</p>
-                <p style={{ fontSize: 13, fontWeight: 800, margin: 0 }}>{review.name}</p>
-              </div>
+          <div className="grid grid-cols-4 gap-4">
+            {galleryImages.map((img, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveImage(img)}
+                className={`aspect-square neo-border overflow-hidden transition-all ${activeImage === img ? 'neo-shadow scale-95 border-[var(--accent)]' : 'opacity-60 hover:opacity-100'}`}
+              >
+                <img src={img} alt="" className="w-full h-full object-cover" />
+              </button>
             ))}
           </div>
         </div>
 
-        {relatedProducts.length > 0 ? (
-          <div style={{ marginTop: 80 }}>
-            <h2 style={{ fontSize: 24, fontWeight: 900, marginBottom: 32 }}>YOU MIGHT ALSO LIKE</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 20 }}>
-              {relatedProducts.map((p, i) => <ProductCard key={p.id} product={p} index={i} mobile={true} />)}
+        {/* ── Right: Info ── */}
+        <div className="flex flex-col gap-8">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <span className="bg-black text-white px-2 py-1 text-[10px] font-black uppercase tracking-tighter border-2 border-black">
+                {product.brand || 'KINCLOTH'}
+              </span>
+              <div className="flex items-center gap-1 text-[var(--accent)]">
+                {[1,2,3,4,5].map(s => <Star key={s} size={14} fill="currentColor" />)}
+                <span className="ml-1 text-xs font-black text-[var(--foreground)]">4.9 (128)</span>
+              </div>
+            </div>
+            
+            <h1 className="text-4xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-4">
+              {product.name}
+            </h1>
+
+            <div className="flex items-baseline gap-4">
+              <span className="text-4xl font-black tracking-tighter">${product.price.toFixed(2)}</span>
+              <span className="text-xl text-[var(--muted)] font-bold line-through tracking-tighter">${discountedPrice}</span>
+              <span className="bg-[var(--accent)] text-black px-2 py-0.5 neo-border text-[10px] font-black uppercase">
+                -30% OFF
+              </span>
             </div>
           </div>
-        ) : (
-          <div style={{ marginTop: 80 }}>
-            <h2 style={{ fontSize: 24, fontWeight: 900, marginBottom: 32 }}>YOU MIGHT ALSO LIKE</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 20 }}>
-              {[1,2,3,4].map(n => <ProductCardSkeleton key={`rel-skeleton-${n}`} mobile />)}
+
+          <p className="text-sm md:text-base font-bold leading-relaxed text-[var(--muted)] border-l-4 border-black pl-6 py-2 uppercase tracking-tight">
+            {product.description}
+          </p>
+
+          <div className="space-y-8 py-8 border-y-2 border-black border-dashed">
+            {/* Color Select */}
+            <div className="space-y-4">
+              <span className="text-xs font-black uppercase tracking-widest block">
+                Select Color: <span className="text-[var(--accent)]">{selectedColor.label}</span>
+              </span>
+              <div className="flex gap-4">
+                {COLORS.map(color => (
+                  <button
+                    key={color.hex}
+                    onClick={() => setSelectedColor(color)}
+                    className={`w-10 h-10 neo-border transition-all ${selectedColor.hex === color.hex ? 'neo-shadow scale-110' : 'hover:scale-105'}`}
+                    style={{ background: color.hex }}
+                    title={color.label}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Size Select */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-black uppercase tracking-widest">Select Size</span>
+                <button className="text-[10px] font-black uppercase tracking-widest underline decoration-2 underline-offset-4 hover:text-[var(--accent)] transition-colors">Size Guide</button>
+              </div>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                {SIZES.map(size => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`h-12 neo-border font-black text-sm transition-all ${selectedSize === size ? 'bg-black text-white neo-shadow scale-95' : 'bg-white text-black hover:bg-[var(--accent)]'}`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        )}
+
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="flex items-center h-14 neo-border bg-white px-4 gap-6">
+              <button onClick={() => setQty(Math.max(1, qty - 1))} className="hover:text-[var(--accent)] transition-colors"><Minus size={20} /></button>
+              <span className="w-8 text-center font-black text-lg">{qty}</span>
+              <button onClick={() => setQty(qty + 1)} className="hover:text-[var(--accent)] transition-colors"><Plus size={20} /></button>
+            </div>
+            
+            <button
+              onClick={(e) => {
+                burst(e.clientX, e.clientY);
+                handleAddToCart();
+              }}
+              disabled={isLoading || isAdding || isAdded}
+              className={`flex-1 h-14 neo-button text-base flex items-center justify-center gap-3 ${isAdded ? 'bg-green-500' : ''}`}
+            >
+              {isAdded ? <Check size={22} /> : <ShoppingBag size={22} />}
+              {isAdding ? 'ADDING...' : isAdded ? 'ADDED' : 'ADD TO BAG'}
+            </button>
+          </div>
+
+          {/* Benefits */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+            {[
+              { icon: <Truck size={18} />, text: 'FREE SHIPPING' },
+              { icon: <RefreshCcw size={18} />, text: '30D RETURNS' },
+              { icon: <ShieldCheck size={18} />, text: 'SECURE CHECKOUT' },
+            ].map((benefit, i) => (
+              <div key={i} className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest bg-[var(--card)] p-3 neo-border">
+                {benefit.icon}
+                {benefit.text}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <Footer />
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} onCheckout={() => { setIsCartOpen(false); setIsCheckoutOpenLocal(true); }} />
-      <CheckoutSheet isOpen={isCheckoutOpenLocal} onClose={() => setIsCheckoutOpenLocal(false)} />
+      {/* ── Reviews & Related ── */}
+      <section className="border-t-[3px] border-black bg-[var(--sidebar)] py-20 px-6">
+        <div className="max-w-7xl mx-auto space-y-20">
+          
+          <div className="space-y-12">
+            <div className="flex items-center justify-between">
+              <h2 className="text-4xl lg:text-6xl font-black uppercase tracking-tighter">Reviews</h2>
+              <button className="neo-button text-[10px] py-2">Write Review</button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {REVIEWS.map((review, i) => (
+                <div key={i} className="neo-border bg-white p-8 neo-shadow-hover space-y-4">
+                  <div className="flex gap-1 text-[var(--accent)]">
+                    {Array.from({ length: review.rating }).map((_, s) => <Star key={s} size={14} fill="currentColor" />)}
+                  </div>
+                  <p className="text-sm font-bold uppercase tracking-tight leading-relaxed italic">"{review.body}"</p>
+                  <div className="pt-4 border-t border-black border-dashed flex justify-between items-center">
+                    <span className="text-[10px] font-black uppercase">{review.name}</span>
+                    <span className="text-[10px] font-bold text-[var(--muted)]">{review.date}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-12">
+            <h2 className="text-4xl lg:text-6xl font-black uppercase tracking-tighter">You Might Like</h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+              {relatedProducts.length > 0 ? (
+                relatedProducts.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)
+              ) : (
+                [1,2,3,4].map(n => <ProductCardSkeleton key={n} />)
+              )}
+            </div>
+          </div>
+
+        </div>
+      </section>
     </div>
   );
 }
 
-// ─── Exported wrapper that provides Search context ───────────────────────────
 export function ProductDetailsView({ product, allProducts }: Props) {
   return (
-    <SearchProvider products={allProducts}>
+    <MainLayout products={allProducts}>
       <PDPInner product={product} allProducts={allProducts} />
-    </SearchProvider>
+    </MainLayout>
   );
 }
