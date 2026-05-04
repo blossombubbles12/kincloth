@@ -40,6 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+
 # medusa backend
-/backend
+# (Removed /backend ignore to allow pushing)
 
