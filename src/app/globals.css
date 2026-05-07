@@ -16,8 +16,8 @@
   --card-foreground: #000000;
 
   --border: #000000;
-  --border-width: 3px;
-  --shadow-offset: 5px;
+  --border-width: 2px;
+  --shadow-offset: 3px;
   --muted: #555555;
 
   --header-bg: rgba(255, 255, 255, 0.97);
@@ -31,6 +31,13 @@
   --btn-text: #ffffff;
   --btn-hover-bg: #ffff00;
   --btn-hover-text: #000000;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --border-width: 3px;
+    --shadow-offset: 5px;
+  }
 }
 
 /* ── Dark Mode ── */

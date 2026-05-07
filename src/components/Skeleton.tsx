@@ -55,7 +55,7 @@ export const ProductCardSkeleton = ({ mobile = false }) => {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10, padding: '8px 0' }}>
           <Skeleton width="40%" height={12} />
           <Skeleton width="90%" height={18} />
-          <Skeleton width="30%" height={14} />
+          {/* Removed description skeleton */}
           <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between' }}>
             <Skeleton width={60} height={30} borderRadius={8} />
             <Skeleton width={30} height={30} borderRadius={8} />
@@ -77,7 +77,7 @@ export const ProductCardSkeleton = ({ mobile = false }) => {
       <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
         <Skeleton width="30%" height={10} />
         <Skeleton width="80%" height={16} />
-        <Skeleton width="40%" height={14} />
+        {/* Removed description skeleton */}
         <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
           <Skeleton width="70%" height={36} borderRadius={10} />
           <Skeleton width="20%" height={36} borderRadius={10} />

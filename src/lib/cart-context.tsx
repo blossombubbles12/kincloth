@@ -22,6 +22,8 @@ interface CartContextType {
   cartId: string | null;
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
+  isMenuOpen: boolean;
+  setIsMenuOpen: (isOpen: boolean) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -31,6 +33,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [cartId, setCartId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const syncCart = (cart: any) => {
     if (!cart) {
@@ -183,7 +186,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isLoading,
       cartId,
       isCartOpen,
-      setIsCartOpen
+      setIsCartOpen,
+      isMenuOpen,
+      setIsMenuOpen
     }}>
       {children}
     </CartContext.Provider>

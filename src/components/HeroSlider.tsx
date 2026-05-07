@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight, Play, Pause } from 'lucide-react';
 import Link from 'next/link';
 
 const slides = [
@@ -13,7 +13,7 @@ const slides = [
     sub: 'Unapologetic. Unfiltered. Unyielding.',
     cta: 'Shop Collection',
     href: '/shop',
-    image: 'https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=1400&q=80',
+    video: 'https://res.cloudinary.com/dtw0ajpwa/video/upload/v1778153126/kincloth6_lzl4i6.mp4',
   },
   {
     id: 2,
@@ -22,7 +22,7 @@ const slides = [
     sub: 'Deep blacks. Hard edges. Zero compromise.',
     cta: 'View Drop',
     href: '/drops',
-    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1400&q=80',
+    video: 'https://res.cloudinary.com/dtw0ajpwa/video/upload/v1778153099/kincloth8_wlomxm.mp4',
   },
   {
     id: 3,
@@ -31,40 +31,52 @@ const slides = [
     sub: 'The culture has no rules. Neither do we.',
     cta: 'Explore',
     href: '/shop',
-    image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=1400&q=80',
+    video: 'https://res.cloudinary.com/dtw0ajpwa/video/upload/v1778153094/kincloth7_zzmecc.mp4',
   },
 ];
 
 export const HeroSlider: React.FC = () => {
   const [current, setCurrent] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const t = setInterval(() => setCurrent(p => (p + 1) % slides.length), 6000);
+    let t: NodeJS.Timeout;
+    if (isPlaying) {
+      t = setInterval(() => setCurrent(p => (p + 1) % slides.length), 8000);
+    }
     return () => clearInterval(t);
-  }, []);
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(() => setIsPlaying(false));
+    }
+  }, [current]);
 
   const slide = slides[current];
 
   return (
-    <div className="relative w-full overflow-hidden neo-border neo-shadow" style={{ height: 480 }}>
+    <div className="relative w-full overflow-hidden neo-border neo-shadow h-[400px] sm:h-[520px]">
       <AnimatePresence mode="wait">
         <motion.div
           key={slide.id}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.4 }}
-          className="absolute inset-0 flex"
+          transition={{ duration: 0.6 }}
+          className="absolute inset-0 flex flex-col md:flex-row"
         >
           {/* Left: Text */}
-          <div className="relative z-10 flex flex-col justify-center px-12 md:px-16 w-full md:w-1/2 bg-[var(--background)]">
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em] mb-4 px-3 py-1 border-2 border-[var(--border)] w-fit">
+          <div className="relative z-10 flex flex-col justify-center px-8 md:px-16 w-full md:w-1/2 bg-[var(--background)] h-1/2 md:h-full border-b-[3px] md:border-b-0 border-[var(--border)]">
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em] mb-4 px-3 py-1 border-[var(--border-width)] border-[var(--border)] w-fit">
               {slide.tag}
             </span>
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.05] mb-4">
+            <h1 className="text-3xl md:text-5xl font-black tracking-tight leading-[1.05] mb-4">
               {slide.title}
             </h1>
-            <p className="text-sm font-medium text-[var(--muted)] mb-8 max-w-xs leading-relaxed">
+            <p className="text-xs sm:text-sm font-medium text-[var(--muted)] mb-8 max-w-xs leading-relaxed">
               {slide.sub}
             </p>
             <Link href={slide.href} className="neo-button flex items-center gap-3 w-fit group">
@@ -73,21 +85,41 @@ export const HeroSlider: React.FC = () => {
             </Link>
           </div>
 
-          {/* Right: Image */}
-          <div className="hidden md:block w-1/2 relative border-l-[3px] border-[var(--border)]">
-            <img
-              src={slide.image}
-              alt={slide.title}
-              className="w-full h-full object-cover"
+          {/* Right: Video */}
+          <div className="w-full md:w-1/2 h-1/2 md:h-full relative md:border-l-[3px] border-[var(--border)] bg-black group">
+            <video
+              ref={videoRef}
+              src={slide.video}
+              key={slide.video}
+              className="w-full h-full object-cover transition-all duration-700"
+              autoPlay
+              muted
+              loop
+              playsInline
             />
+            
+            {/* Play/Pause Overlay */}
+            <button 
+              onClick={() => {
+                if (videoRef.current) {
+                  if (isPlaying) videoRef.current.pause();
+                  else videoRef.current.play();
+                  setIsPlaying(!isPlaying);
+                }
+              }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-[var(--accent)] border-[3px] border-black flex items-center justify-center neo-shadow opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100 z-20"
+            >
+              {isPlaying ? <Pause size={24} className="text-black" /> : <Play size={24} className="text-black ml-1" />}
+            </button>
+
             {/* Yellow accent block */}
-            <div className="absolute bottom-0 left-0 w-16 h-16 bg-[#ffff00] border-r-[3px] border-t-[3px] border-[var(--border)]" />
+            <div className="absolute bottom-0 left-0 w-16 h-16 bg-[#ffff00] border-r-[3px] border-t-[3px] border-[var(--border)] hidden md:block" />
           </div>
         </motion.div>
       </AnimatePresence>
 
       {/* Slide counter */}
-      <div className="absolute bottom-6 left-12 flex items-center gap-4 z-20">
+      <div className="absolute bottom-6 left-8 md:left-12 flex items-center gap-4 z-20">
         {slides.map((_, i) => (
           <button
             key={i}

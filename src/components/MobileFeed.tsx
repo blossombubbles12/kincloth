@@ -9,6 +9,7 @@ import { ProductCardSkeleton } from './Skeleton';
 import { PersonalizedSection } from './PersonalizedSection';
 import { CategoryGrid } from './CategoryGrid';
 import { AboutSnippet } from './AboutSnippet';
+import { CreativeTitle } from './CreativeTitle';
 
 interface MobileFeedProps {
   initialProducts: Product[];
@@ -35,6 +36,10 @@ export const MobileFeed: React.FC<MobileFeedProps> = ({ initialProducts }) => {
 
       <div className="px-4">
         <AboutSnippet />
+      </div>
+
+      <div className="my-10">
+        <CreativeTitle />
       </div>
 
       {/* Section header */}

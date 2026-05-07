@@ -69,23 +69,24 @@ export function ShopPageView({ initialProducts }: Props) {
       {/* ── MOBILE VIEW ── */}
       <div className="sc-mobile-only">
         {/* ── Filter Bar ── */}
-        <div className="sticky top-0 z-20 bg-[var(--header-bg)] border-b-[3px] border-[var(--border)]">
-          <div className="flex items-center gap-2 px-4 py-3 overflow-x-auto hide-scrollbar">
+        <div className="sticky top-[60px] z-20 bg-[var(--header-bg)] border-b-[2px] border-[var(--border)] shadow-sm">
+          <div className="flex items-center gap-2 px-4 py-2.5 overflow-x-auto hide-scrollbar">
             <button
               onClick={() => setIsFilterOpen(true)}
-              className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 neo-border text-xs font-bold uppercase tracking-widest transition-colors ${
+              className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 neo-border text-[11px] font-black uppercase tracking-widest transition-colors ${
                 priceRanges.length > 0 ? 'bg-[var(--accent)] text-black' : 'bg-[var(--card)] hover:bg-[var(--accent)] hover:text-black'
               }`}
             >
               <SlidersHorizontal size={12} /> Filter{priceRanges.length > 0 ? ` (${priceRanges.length})` : ''}
             </button>
+            <div className="w-[1px] h-4 bg-[var(--border)] flex-shrink-0 mx-1" />
             {['All', ...Array.from(new Set(allProducts.map(p => p.category).filter(Boolean)))].map(cat => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat as string)}
-                className={`flex-shrink-0 px-3 py-2 neo-border text-xs font-bold uppercase tracking-widest transition-colors whitespace-nowrap ${
+                className={`flex-shrink-0 px-3 py-1.5 neo-border text-[11px] font-black uppercase tracking-widest transition-colors whitespace-nowrap ${
                   selectedCategory === cat
-                    ? 'bg-[var(--foreground)] text-[var(--background)]'
+                    ? 'bg-black text-white'
                     : 'bg-[var(--card)] text-[var(--muted)] hover:border-[var(--accent)]'
                 }`}
               >
@@ -96,24 +97,27 @@ export function ShopPageView({ initialProducts }: Props) {
         </div>
 
         {/* ── Sort Row ── */}
-        <div className="flex items-center justify-between px-4 py-3 border-b-[3px] border-[var(--border)]">
-          <span className="text-xs text-[var(--muted)] font-medium">
-            <span className="font-black text-[var(--foreground)]">{filteredProducts.length}</span> products
+        <div className="flex items-center justify-between px-4 py-3 bg-[var(--sidebar)] border-b-[2px] border-[var(--border)]">
+          <span className="text-[10px] text-[var(--muted)] font-black uppercase tracking-widest">
+            <span className="text-[var(--foreground)]">{filteredProducts.length}</span> Results
           </span>
-          <select
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value)}
-            className="text-xs font-bold uppercase tracking-widest bg-[var(--card)] neo-border px-3 py-1.5 outline-none cursor-pointer"
-          >
-            <option value="featured">Featured</option>
-            <option value="newest">Newest</option>
-            <option value="price-low">Price ↑</option>
-            <option value="price-high">Price ↓</option>
-          </select>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Sort:</span>
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value)}
+              className="text-[10px] font-black uppercase tracking-widest bg-[var(--card)] neo-border px-2 py-1 outline-none cursor-pointer"
+            >
+              <option value="featured">Featured</option>
+              <option value="newest">Newest</option>
+              <option value="price-low">Price ↑</option>
+              <option value="price-high">Price ↓</option>
+            </select>
+          </div>
         </div>
 
         {/* ── Product Grid ── */}
-        <div className="p-4 grid grid-cols-2 gap-3">
+        <div className="p-3 grid grid-cols-2 gap-3 bg-[var(--background)]">
           {filteredProducts.map((product, i) => (
             <ProductCard
               key={`${product.id}-${i}`}
@@ -125,9 +129,17 @@ export function ShopPageView({ initialProducts }: Props) {
         </div>
 
         {/* ── End sentinel ── */}
-        <div ref={bottomRef} className="h-16 flex items-center justify-center">
-          {!hasMore && filteredProducts.length > 0 && (
-            <p className="text-xs text-[var(--muted)] font-bold uppercase tracking-widest">All products loaded</p>
+        <div ref={bottomRef} className="h-24 flex flex-col items-center justify-center gap-4 border-t-[var(--border-width)] border-[var(--border)] border-dashed mt-8">
+          {!hasMore && filteredProducts.length > 0 ? (
+            <>
+              <div className="w-8 h-[2px] bg-[var(--accent)]" />
+              <p className="text-[10px] text-[var(--muted)] font-black uppercase tracking-[0.2em]">End of Collection</p>
+            </>
+          ) : (
+             <div className="flex items-center gap-2 text-[var(--muted)]">
+                <div className="w-4 h-4 border-2 border-[var(--muted)] border-t-transparent animate-spin" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Loading...</span>
+             </div>
           )}
         </div>
 
@@ -231,14 +243,7 @@ export function ShopPageView({ initialProducts }: Props) {
       </div>
 
       {/* ── DESKTOP VIEW ── */}
-      <div className="sc-desktop-only" style={{ 
-        height: 'calc(100vh - 72px)', // Substract header height
-        width: '100%', 
-        overflow: 'hidden', 
-        background: 'var(--background)',
-        display: 'flex',
-        flexDirection: 'column'
-      }}>
+      <div className="sc-desktop-only hidden lg:flex flex-col w-full bg-[var(--background)] overflow-hidden h-[calc(100vh-64px)]">
         
         {/* ── Main Shop Content ── */}
         <div style={{

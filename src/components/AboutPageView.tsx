@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Zap, Flame, Globe, Scissors } from 'lucide-react';
@@ -12,6 +12,23 @@ const fadeIn = {
 };
 
 export function AboutPageView() {
+  const visionVideoRef = useRef<HTMLVideoElement>(null);
+  const storyVideoRef = useRef<HTMLVideoElement>(null);
+  const fitVideoRef = useRef<HTMLVideoElement>(null);
+
+  const handlePlay = (ref: React.RefObject<HTMLVideoElement | null>) => {
+    if (ref.current) {
+      ref.current.muted = true;
+      ref.current.play().catch(e => console.log("Video play failed", e));
+    }
+  };
+
+  useEffect(() => {
+    handlePlay(visionVideoRef);
+    handlePlay(storyVideoRef);
+    handlePlay(fitVideoRef);
+  }, []);
+
   const PageContent = () => (
     <div className="flex flex-col w-full">
       {/* ── Hero Statement ── */}
@@ -51,11 +68,22 @@ export function AboutPageView() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
             variants={fadeIn}
-            className="neo-border bg-zinc-200 aspect-square relative overflow-hidden"
+            className="neo-border bg-black aspect-square relative overflow-hidden"
           >
-            <img src="https://images.unsplash.com/photo-1523398002811-999aa8e9f5b9?q=80&w=2000&auto=format&fit=crop" alt="Our Story" className="w-full h-full object-cover grayscale" />
-            <div className="absolute inset-0 bg-black/20" />
-            <div className="absolute bottom-4 left-4 bg-[var(--accent)] text-black px-4 py-2 font-black uppercase text-2xl border-2 border-black">EST. 2026</div>
+            <video 
+              ref={storyVideoRef}
+              src="https://res.cloudinary.com/dtw0ajpwa/video/upload/v1778148369/kincloth4_r0jpkm.mp4"
+              className="w-full h-full object-contain"
+              autoPlay={true}
+              loop={true}
+              muted={true}
+              playsInline={true}
+              // @ts-ignore
+              webkit-playsinline="true"
+              onLoadedData={() => handlePlay(storyVideoRef)}
+            />
+            <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+            <div className="absolute bottom-4 left-4 bg-[var(--accent)] text-black px-4 py-2 font-black uppercase text-2xl border-2 border-black z-10">EST. 2026</div>
           </motion.div>
           
           <motion.div
@@ -119,6 +147,37 @@ export function AboutPageView() {
         </div>
       </section>
 
+      {/* ── Cinematic Vision Video ── */}
+      <section className="relative h-[50vh] lg:h-[70vh] border-b-[3px] border-[var(--border)] overflow-hidden bg-black">
+        <video 
+          ref={visionVideoRef}
+          src="https://res.cloudinary.com/dtw0ajpwa/video/upload/v1778146892/kincloth3_tblhwa.mp4"
+          className="absolute inset-0 w-full h-full object-contain"
+          autoPlay={true}
+          loop={true}
+          muted={true}
+          playsInline={true}
+          // @ts-ignore
+          webkit-playsinline="true"
+          onLoadedData={() => handlePlay(visionVideoRef)}
+        />
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 flex items-center justify-center text-center p-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            variants={fadeIn}
+          >
+            <h2 className="text-4xl lg:text-8xl font-black text-white uppercase tracking-tighter leading-[0.8]">
+              NO COMPROMISE. <br/>
+              <span className="text-[var(--accent)]">JUST CULTURE.</span>
+            </h2>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── Our Products ── */}
       <section className="px-6 py-16 lg:py-24 border-b-[3px] border-[var(--border)] bg-[var(--background)]">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
@@ -153,9 +212,20 @@ export function AboutPageView() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
             variants={fadeIn}
-            className="order-1 lg:order-2 neo-border bg-zinc-200 aspect-[4/5] relative overflow-hidden"
+            className="order-1 lg:order-2 neo-border bg-black aspect-[4/5] relative overflow-hidden"
           >
-            <img src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=2000&auto=format&fit=crop" alt="Our Products" className="w-full h-full object-cover grayscale" />
+            <video 
+              ref={fitVideoRef}
+              src="https://res.cloudinary.com/dtw0ajpwa/video/upload/v1778152149/kincloth5_qevgjd.mp4"
+              className="w-full h-full object-contain"
+              autoPlay={true}
+              loop={true}
+              muted={true}
+              playsInline={true}
+              // @ts-ignore
+              webkit-playsinline="true"
+              onLoadedData={() => handlePlay(fitVideoRef)}
+            />
           </motion.div>
         </div>
       </section>

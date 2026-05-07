@@ -55,7 +55,7 @@ export function PersonalizedSection({ products }: { products: Product[] }) {
   const isActuallyPersonalized = recentProducts.length > 0 || recentQueries.length > 0;
 
   return (
-    <div className="my-16 border-[3px] border-[var(--border)] bg-black text-white p-8 md:p-12 relative overflow-hidden group neo-shadow">
+    <div className="my-10 sm:my-16 border-[var(--border-width)] border-[var(--border)] bg-black text-white p-5 sm:p-8 md:p-12 relative overflow-hidden group neo-shadow">
       {/* Background AI grid pattern */}
       <div className="absolute inset-0 opacity-10 pointer-events-none" style={{
         backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
@@ -80,7 +80,7 @@ export function PersonalizedSection({ products }: { products: Product[] }) {
                 <span className="w-2 h-2 bg-[#ffff00] animate-pulse" /> 
                 System Active
               </p>
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight leading-none uppercase">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-none uppercase">
                 {isActuallyPersonalized ? 'Tailored Chaos' : 'The Algorithm'}
               </h2>
               <p className="font-bold text-xs uppercase tracking-widest opacity-60 mt-2">
@@ -97,7 +97,7 @@ export function PersonalizedSection({ products }: { products: Product[] }) {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {recommendedItems.map((product, i) => (
             <motion.div
               key={`personalized-${product.id}`}

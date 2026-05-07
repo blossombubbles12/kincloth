@@ -12,7 +12,7 @@ export default async function ReelsPage() {
   const products = await getProducts(1, 50);
 
   return (
-    <MainLayout hideHeader hideFooter products={products}>
+    <MainLayout hideHeader hideFooter hideMobileNav products={products}>
       <ReelsView products={products} />
     </MainLayout>
   );

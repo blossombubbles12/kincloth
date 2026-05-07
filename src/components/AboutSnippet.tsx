@@ -1,11 +1,24 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight, Flame } from 'lucide-react';
 
 export function AboutSnippet() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handlePlay = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(e => console.log("Play failed", e));
+    }
+  };
+
+  useEffect(() => {
+    handlePlay();
+  }, []);
+
   return (
     <section className="border-[3px] border-[var(--border)] bg-[var(--card)] my-12 neo-shadow overflow-hidden">
       <div className="grid grid-cols-1 md:grid-cols-2">
@@ -31,17 +44,25 @@ export function AboutSnippet() {
           </div>
         </div>
 
-        {/* Image Section */}
-        <div className="relative aspect-square md:aspect-auto bg-zinc-200">
-          <img 
-            src="https://images.unsplash.com/photo-1523398002811-999aa8e9f5b9?q=80&w=1200&auto=format&fit=crop" 
-            alt="KinCloth Story" 
-            className="w-full h-full object-cover grayscale mix-blend-multiply opacity-90"
+        {/* Video Section */}
+        <div className="relative aspect-square md:aspect-auto bg-black overflow-hidden group">
+          <video 
+            ref={videoRef}
+            src="https://res.cloudinary.com/dtw0ajpwa/video/upload/v1778146097/kincloth1_oajsov.mp4"
+            className="w-full h-full object-contain transition-all duration-700"
+            autoPlay={true}
+            loop={true}
+            muted={true}
+            playsInline={true}
+            // @ts-ignore
+            webkit-playsinline="true"
+            preload="auto"
+            onLoadedData={handlePlay}
           />
-          <div className="absolute inset-0 bg-[var(--accent)] mix-blend-overlay opacity-30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
           
           {/* Decorative Badge */}
-          <div className="absolute bottom-6 right-6 bg-white text-black px-4 py-2 border-[3px] border-black font-black uppercase tracking-widest text-lg neo-shadow transform rotate-[-3deg]">
+          <div className="absolute bottom-6 right-6 bg-[var(--accent)] text-black px-4 py-2 border-[3px] border-black font-black uppercase tracking-widest text-lg neo-shadow transform rotate-[-3deg] z-20">
             EST. 2026
           </div>
         </div>

@@ -83,30 +83,30 @@ export const ProductCard: React.FC<{
       </div>
 
       {/* ── Info ── */}
-      <div className="p-5 flex flex-col gap-3 flex-1">
-        <div className="flex justify-between items-start gap-3">
+      <div className="p-3 sm:p-5 flex flex-col gap-2 sm:gap-3 flex-1">
+        <div className="flex justify-between items-start gap-2">
           <Link href={`/products/${product.id}`} className="flex-1 hover:underline">
-            <h3 className="text-sm font-bold leading-snug tracking-tight text-[var(--foreground)]">
+            <h3 className="text-[13px] sm:text-sm font-bold leading-tight sm:leading-snug tracking-tight text-[var(--foreground)] line-clamp-2">
               {product.name}
             </h3>
           </Link>
-          <span className="text-sm font-black bg-[var(--accent)] text-black px-2 py-0.5 border-2 border-[var(--border)] flex-shrink-0">
+          <span className="text-xs sm:text-sm font-black bg-[var(--accent)] text-black px-1.5 sm:px-2 py-0.5 border-2 border-[var(--border)] flex-shrink-0">
             ${product.price.toFixed(0)}
           </span>
         </div>
 
-        <p className="text-xs text-[var(--muted)] line-clamp-2 leading-relaxed">
+        {/* <p className="text-[10px] sm:text-xs text-[var(--muted)] line-clamp-1 sm:line-clamp-2 leading-relaxed">
           {product.description}
-        </p>
+        </p> */}
 
         <div className="mt-auto flex gap-2">
           <button
             onClick={(e) => handleAdd(e)}
             disabled={isAdding || isLoading}
-            className="flex-1 neo-button flex items-center justify-center gap-2 py-2 h-10 text-xs"
+            className="flex-1 neo-button flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 h-8 sm:h-10 text-[10px] sm:text-xs"
           >
-            {isAdding ? <Loader2 className="animate-spin" size={14} /> : <ShoppingBag size={14} />}
-            {isAdding ? 'Adding...' : 'Add to Bag'}
+            {isAdding ? <Loader2 className="animate-spin" size={12} /> : <ShoppingBag size={12} />}
+            {isAdding ? '...' : 'Add to Bag'}
           </button>
         </div>
       </div>

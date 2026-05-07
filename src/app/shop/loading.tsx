@@ -6,18 +6,19 @@ import { MobileView } from '@/components/MobileView';
 
 export default function Loading() {
   return (
-    <div style={{ height: '100svh', background: 'var(--background)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+    <div className="flex flex-col h-dvh bg-[var(--background)] overflow-hidden">
       {/* Mobile Skeleton */}
-      <div className="lg:hidden" style={{ height: '100%' }}>
-        <MobileView title="Shop" onOpenCart={() => {}}>
-          <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {[1,2,3,4].map(n => <ProductCardSkeleton key={n} mobile />)}
-          </div>
-        </MobileView>
+      <div className="lg:hidden flex flex-col h-full overflow-hidden">
+        <header className="h-[60px] border-b-[2px] border-[var(--border)] bg-[var(--header-bg)] flex items-center px-4">
+          <Skeleton width={100} height={24} />
+        </header>
+        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+           {[1,2,3,4].map(n => <ProductCardSkeleton key={n} mobile />)}
+        </div>
       </div>
 
       {/* Desktop Skeleton */}
-      <div className="hidden lg:block" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <div className="hidden lg:flex flex-col h-full">
         <header style={{
           height: 64, borderBottom: '1px solid var(--border)', background: 'var(--header-bg)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px'
@@ -60,15 +61,6 @@ export default function Loading() {
         </div>
       </div>
 
-      <style>{`
-        .lg\\:hidden { display: block; }
-        .hidden { display: none; }
-        @media (min-width: 1024px) {
-          .lg\\:hidden { display: none !important; }
-          .hidden { display: block !important; }
-          .lg\\:block { display: block !important; }
-        }
-      `}</style>
     </div>
   );
 }

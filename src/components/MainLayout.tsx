@@ -8,19 +8,22 @@ import { CheckoutSheet } from './CheckoutSheet';
 import { useCart } from '@/lib/cart-context';
 import { SearchProvider } from '@/lib/search-context';
 import { Product } from '@/lib/types';
+import { MobileNav } from './MobileNav';
 
 interface MainLayoutProps {
   children: React.ReactNode;
   products?: Product[];
   hideHeader?: boolean;
   hideFooter?: boolean;
+  hideMobileNav?: boolean;
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ 
   children, 
   products = [],
   hideHeader = false,
-  hideFooter = false
+  hideFooter = false,
+  hideMobileNav = false
 }) => {
   const { isCartOpen, setIsCartOpen } = useCart();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -48,6 +51,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         isOpen={isCheckoutOpen} 
         onClose={() => setIsCheckoutOpen(false)} 
       />
+      {!hideMobileNav && <MobileNav />}
       </div>
     </SearchProvider>
   );

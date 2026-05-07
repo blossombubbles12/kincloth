@@ -33,14 +33,14 @@ export function Footer() {
           ].map(({ icon, label, sub }, i) => (
             <div
               key={label}
-              className={`flex items-center gap-4 px-8 py-6 ${i < 3 ? 'border-r-[2px] border-[var(--border)]' : ''}`}
+              className={`flex items-center gap-3 sm:gap-4 px-4 sm:px-8 py-4 sm:py-6 ${i < 3 ? 'border-r-[2px] border-[var(--border)]' : ''} ${i === 1 ? 'border-r-0 sm:border-r-[2px]' : ''}`}
             >
-              <div className="w-10 h-10 neo-border flex items-center justify-center bg-[var(--accent)] text-black flex-shrink-0">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 neo-border flex items-center justify-center bg-[var(--accent)] text-black flex-shrink-0">
                 {icon}
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest">{label}</p>
-                <p className="text-xs text-[var(--muted)] mt-0.5">{sub}</p>
+                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest">{label}</p>
+                <p className="text-[10px] text-[var(--muted)] mt-0.5 hidden sm:block">{sub}</p>
               </div>
             </div>
           ))}
@@ -48,7 +48,7 @@ export function Footer() {
       </div>
 
       {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-8 py-16 grid grid-cols-1 lg:grid-cols-5 gap-12">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 py-10 sm:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 sm:gap-12">
 
         {/* Brand */}
         <div className="lg:col-span-2">

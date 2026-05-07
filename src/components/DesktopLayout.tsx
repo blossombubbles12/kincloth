@@ -6,6 +6,7 @@ import { DesktopFeed, useInfiniteProducts } from './DesktopFeed';
 import { PersonalizedSection } from './PersonalizedSection';
 import { CategoryGrid } from './CategoryGrid';
 import { AboutSnippet } from './AboutSnippet';
+import { CreativeTitle } from './CreativeTitle';
 import { Product } from '@/lib/types';
 
 interface DesktopLayoutProps {
@@ -30,6 +31,11 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({ initialProducts })
 
       {/* About Teaser */}
       <AboutSnippet />
+
+      {/* Creative Title Video Section */}
+      <div className="my-16">
+        <CreativeTitle />
+      </div>
 
       {/* Product Feed */}
       <DesktopFeed

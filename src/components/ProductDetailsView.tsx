@@ -141,13 +141,13 @@ function PDPInner({ product, allProducts }: Props) {
               </div>
             </div>
             
-            <h1 className="text-4xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-4">
+            <h1 className="text-3xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-4">
               {product.name}
             </h1>
 
             <div className="flex items-baseline gap-4">
-              <span className="text-4xl font-black tracking-tighter">${product.price.toFixed(2)}</span>
-              <span className="text-xl text-[var(--muted)] font-bold line-through tracking-tighter">${discountedPrice}</span>
+              <span className="text-3xl lg:text-4xl font-black tracking-tighter">${product.price.toFixed(2)}</span>
+              <span className="text-lg lg:text-xl text-[var(--muted)] font-bold line-through tracking-tighter">${discountedPrice}</span>
               <span className="bg-[var(--accent)] text-black px-2 py-0.5 neo-border text-[10px] font-black uppercase">
                 -30% OFF
               </span>

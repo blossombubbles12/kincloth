@@ -18,9 +18,8 @@ const NAV_LINKS = [
 ];
 
 export const Header = () => {
-  const { setIsCartOpen, itemCount } = useCart();
+  const { setIsCartOpen, itemCount, isMenuOpen, setIsMenuOpen } = useCart();
   const { count: favCount } = useFavourites();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
@@ -28,13 +27,7 @@ export const Header = () => {
       <header className="sticky top-0 z-[60] border-b-[3px] border-[var(--border)] bg-[var(--header-bg)] backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-6">
           
-          {/* Mobile Menu Toggle */}
-          <button 
-            onClick={() => setIsMobileMenuOpen(true)}
-            className="lg:hidden p-2 neo-border bg-[var(--card)] hover:bg-[var(--accent)] transition-colors active:translate-y-0.5"
-          >
-            <Menu size={20} />
-          </button>
+          {/* Logo */}
 
           {/* Logo */}
           <Link href="/" className="flex items-center group flex-shrink-0">
@@ -113,13 +106,13 @@ export const Header = () => {
 
       {/* Mobile Drawer Navigation */}
       <AnimatePresence>
-        {isMobileMenuOpen && (
+        {isMenuOpen && (
           <>
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={() => setIsMenuOpen(false)}
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
             />
             <motion.div
@@ -132,7 +125,7 @@ export const Header = () => {
               <div className="p-6 flex items-center justify-between border-b-2 border-[var(--border)]">
                 <span className="text-xl font-black italic tracking-tighter">KINCLOTH</span>
                 <button 
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={() => setIsMenuOpen(false)}
                   className="p-2 neo-border hover:bg-[var(--accent)] transition-colors"
                 >
                   <X size={20} />
@@ -143,7 +136,7 @@ export const Header = () => {
                   <Link
                     key={label}
                     href={href}
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={() => setIsMenuOpen(false)}
                     className="flex items-center justify-between py-4 border-b border-[var(--border)] border-dashed group"
                   >
                     <span className="text-2xl font-black uppercase tracking-tighter group-hover:bg-[var(--accent)] group-hover:text-black transition-colors px-1">{label}</span>
