@@ -32,7 +32,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
         width,
         height,
         borderRadius,
-        background: 'var(--border)',
+        background: 'var(--card-muted)',
         ...style
       }}
     />

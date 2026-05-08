@@ -13,18 +13,24 @@
   --accent-foreground: #000000;
 
   --card: #ffffff;
+  --card-muted: #f5f5f5;
   --card-foreground: #000000;
 
   --border: #000000;
   --border-width: 2px;
   --shadow-offset: 3px;
-  --muted: #555555;
+  --muted: #666666;
+  --muted-foreground: #999999;
 
   --header-bg: rgba(255, 255, 255, 0.97);
   --sidebar: #f5f5f5;
   --drawer-bg: #ffffff;
   --drawer-item-bg: #f5f5f5;
-  --overlay-bg: rgba(0, 0, 0, 0.5);
+  --overlay-bg: rgba(0, 0, 0, 0.4);
+
+  --input-bg: #ffffff;
+  --input-border: #000000;
+  --input-focus: #ffff00;
 
   /* CTA button: black in light mode */
   --btn-bg: #000000;
@@ -42,22 +48,28 @@
 
 /* ── Dark Mode ── */
 .dark {
-  --background: #0a0a0a;
+  --background: #000000;
   --foreground: #ffffff;
   --accent: #ffff00;
   --accent-foreground: #000000;
 
-  --card: #111111;
+  --card: #0a0a0a;
+  --card-muted: #111111;
   --card-foreground: #ffffff;
 
   --border: #ffffff;
-  --muted: #888888;
+  --muted: #a0a0a0;
+  --muted-foreground: #666666;
 
-  --header-bg: rgba(10, 10, 10, 0.97);
-  --sidebar: #0a0a0a;
-  --drawer-bg: #111111;
-  --drawer-item-bg: #1a1a1a;
-  --overlay-bg: rgba(0, 0, 0, 0.7);
+  --header-bg: rgba(0, 0, 0, 0.97);
+  --sidebar: #050505;
+  --drawer-bg: #0a0a0a;
+  --drawer-item-bg: #111111;
+  --overlay-bg: rgba(0, 0, 0, 0.8);
+
+  --input-bg: #0a0a0a;
+  --input-border: #ffffff;
+  --input-focus: #ffff00;
 
   /* CTA button: white in dark mode */
   --btn-bg: #ffffff;

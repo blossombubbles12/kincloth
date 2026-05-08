@@ -82,7 +82,7 @@ const ReelItem: React.FC<ReelItemProps> = ({ product, isActive, isMuted }) => {
           }}
           className="flex flex-col items-center gap-1 group"
         >
-          <div className={`w-12 h-12 border-[3px] border-white flex items-center justify-center transition-colors ${isLiked ? 'bg-[#ffff00]' : 'bg-black group-hover:bg-[#ffff00]'}`}>
+          <div className={`w-12 h-12 border-[3px] border-white flex items-center justify-center transition-colors ${isLiked ? 'bg-[var(--accent)] text-black' : 'bg-black group-hover:bg-[var(--accent)]'}`}>
             <Heart size={20} fill={isLiked ? 'black' : 'none'} className={isLiked ? 'text-black' : 'text-white group-hover:text-black'} />
           </div>
           <span className="text-white text-[10px] font-bold uppercase tracking-widest drop-shadow-md">
@@ -110,12 +110,12 @@ const ReelItem: React.FC<ReelItemProps> = ({ product, isActive, isMuted }) => {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="text-xl font-black text-[#ffff00] bg-black px-3 py-1 border-[3px] border-[#ffff00]">
+          <div className="text-xl font-black text-[var(--accent)] bg-black px-3 py-1 border-[3px] border-[var(--accent)]">
             ${product.price.toFixed(0)}
           </div>
           <Link 
             href={`/products/${product.id}`}
-            className="px-4 py-3 bg-black border-[3px] border-white text-white text-xs font-bold uppercase tracking-widest hover:bg-[#ffff00] hover:border-[#ffff00] hover:text-black transition-colors"
+            className="px-4 py-3 bg-black border-[3px] border-white text-white text-xs font-bold uppercase tracking-widest hover:bg-[var(--accent)] hover:border-[var(--accent)] hover:text-black transition-colors"
           >
             Details
           </Link>
@@ -125,7 +125,7 @@ const ReelItem: React.FC<ReelItemProps> = ({ product, isActive, isMuted }) => {
               burst(e.clientX, e.clientY);
               addToCart(product);
             }}
-            className="flex-1 px-4 py-3 bg-[#ffff00] border-[3px] border-[#ffff00] text-black text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-white transition-colors"
+            className="flex-1 px-4 py-3 bg-[var(--accent)] border-[3px] border-[var(--accent)] text-black text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-white transition-colors"
           >
             <ShoppingBag size={16} /> Add to Bag
           </motion.button>
@@ -185,13 +185,13 @@ export function ReelsView({ products }: { products: Product[] }) {
       {/* ── Global Reels Header ── */}
       <div className="absolute top-0 left-0 right-0 p-6 pt-10 bg-gradient-to-b from-black/80 to-transparent flex justify-between items-center z-[70]">
         <div className="flex items-center gap-2">
-          <Link href="/" className="flex items-center gap-2 bg-black border-[3px] border-white text-white px-4 py-2 hover:bg-[#ffff00] hover:text-black transition-colors">
+          <Link href="/" className="flex items-center gap-2 bg-black border-[3px] border-white text-white px-4 py-2 hover:bg-[var(--accent)] hover:text-black transition-colors">
             <ArrowLeft size={16} />
             <span className="font-bold text-xs uppercase tracking-widest">Exit</span>
           </Link>
           <button 
             onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className={`w-10 h-10 border-[3px] flex items-center justify-center transition-colors ${isFilterOpen ? 'bg-[var(--accent)] border-[var(--accent)] text-black' : 'bg-black border-white text-white hover:bg-[#ffff00] hover:text-black'}`}
+            className={`w-10 h-10 border-[3px] flex items-center justify-center transition-colors ${isFilterOpen ? 'bg-[var(--accent)] border-[var(--accent)] text-black' : 'bg-black border-white text-white hover:bg-[var(--accent)] hover:text-black'}`}
           >
             <SlidersHorizontal size={18} />
           </button>

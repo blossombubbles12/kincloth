@@ -34,8 +34,8 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ products, selectedCate
               onClick={() => setSelectedCategory(cat as string)}
               className={`text-left text-sm font-black px-4 py-2 neo-border transition-all ${
                 selectedCategory === cat
-                  ? 'bg-[#ffff00] translate-x-2'
-                  : 'bg-white hover:bg-[#ffff00] hover:translate-x-1'
+                  ? 'bg-[var(--accent)] text-black translate-x-2'
+                  : 'bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--accent)] hover:text-black hover:translate-x-1'
               }`}
             >
               {cat as string}
@@ -45,15 +45,15 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ products, selectedCate
       </section>
 
       {/* Recents / Recommendations */}
-      <section className="neo-border bg-white p-6 neo-shadow">
-        <div className="flex items-center gap-3 mb-6 border-b-2 border-black pb-2">
-          <Zap size={18} className="fill-[#ffff00]" />
+      <section className="neo-border bg-[var(--card)] p-6 neo-shadow text-[var(--foreground)]">
+        <div className="flex items-center gap-3 mb-6 border-b-2 border-[var(--border)] pb-2">
+          <Zap size={18} className="fill-[var(--accent)] text-[var(--accent)]" />
           <h3 className="text-lg font-black tracking-tighter">VIBE CHECK</h3>
         </div>
         
         <div className="space-y-6">
           {products.slice(0, 4).map((item) => (
-            <div key={item.id} className="flex items-center gap-4 group cursor-pointer border-b border-black/10 pb-4 last:border-0 last:pb-0">
+            <div key={item.id} className="flex items-center gap-4 group cursor-pointer border-b border-[var(--border)] opacity-80 hover:opacity-100 pb-4 last:border-0 last:pb-0">
               <div className="w-14 h-14 neo-border overflow-hidden flex-shrink-0 group-hover:rotate-3 transition-transform">
                 {item.thumbnail_url ? (
                   <img src={item.thumbnail_url} alt={item.name} className="w-full h-full object-cover" />
@@ -62,7 +62,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ products, selectedCate
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-black uppercase leading-tight truncate group-hover:bg-[#ffff00] px-1 w-fit">
+                <p className="text-xs font-black uppercase leading-tight truncate group-hover:bg-[var(--accent)] group-hover:text-black px-1 w-fit">
                   {item.name}
                 </p>
                 <p className="text-sm font-bold">${item.price.toFixed(0)}</p>

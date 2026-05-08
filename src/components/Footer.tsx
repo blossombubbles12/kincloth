@@ -53,8 +53,7 @@ export function Footer() {
         {/* Brand */}
         <div className="lg:col-span-2">
           <Link href="/" className="flex items-center gap-1 group mb-6 w-fit">
-            <span className="text-xl font-black tracking-tight group-hover:bg-[var(--accent)] group-hover:text-black transition-colors px-1">KIN</span>
-            <span className="text-xl font-black tracking-tight group-hover:bg-[var(--accent)] group-hover:text-black transition-colors px-1">CLOTH</span>
+            <img src="/images/logo.png" alt="KINCLOTH" className="h-8 object-contain dark:invert" />
           </Link>
 
           <p className="text-sm text-[var(--muted)] leading-relaxed max-w-xs mb-8">
@@ -113,13 +112,13 @@ export function Footer() {
                 <li key={link}>
                   <Link
                     href={
-                      link === 'About' ? '/about' : 
-                      link === 'Contact' ? '/contact' : 
-                      link === 'Track Order' ? '/track-order' :
-                      link === 'FAQ' ? '/faq' :
-                      link === 'Privacy Policy' ? '/privacy' : 
-                      link === 'Terms' ? '/terms' : 
-                      '/shop'
+                      link === 'About' ? '/about' :
+                        link === 'Contact' ? '/contact' :
+                          link === 'Track Order' ? '/track-order' :
+                            link === 'FAQ' ? '/faq' :
+                              link === 'Privacy Policy' ? '/privacy' :
+                                link === 'Terms' ? '/terms' :
+                                  '/shop'
                     }
                     className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--accent)] hover:px-1 transition-all"
                   >
@@ -146,9 +145,9 @@ export function Footer() {
         </div>
         <div className="flex gap-6">
           {['Terms', 'Privacy', 'Cookies'].map(item => (
-            <Link 
-              key={item} 
-              href={`/${item.toLowerCase()}`} 
+            <Link
+              key={item}
+              href={`/${item.toLowerCase()}`}
               className="text-xs text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
             >
               {item}

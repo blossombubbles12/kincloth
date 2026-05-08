@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { ProductCardSkeleton } from './Skeleton';
 import { MainLayout } from './MainLayout';
-
+import { useCart } from '@/lib/cart-context';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
 interface Props {
@@ -87,6 +87,8 @@ export function ShopPageView({ initialProducts }: Props) {
       prev.includes(range) ? prev.filter(r => r !== range) : [...prev, range]
     );
   };
+
+  const { setIsCartOpen } = useCart();
 
   return (
     <MainLayout products={allProducts}>
@@ -463,7 +465,7 @@ export function ShopPageView({ initialProducts }: Props) {
             padding: 20,
             background: 'var(--sidebar)',
           }}>
-            <RightSidebar onOpenCart={() => {}} />
+            <RightSidebar onOpenCart={() => setIsCartOpen(true)} />
           </div>
 
         </div>

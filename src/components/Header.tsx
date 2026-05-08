@@ -31,7 +31,7 @@ export const Header = () => {
 
           {/* Logo */}
           <Link href="/" className="flex items-center group flex-shrink-0">
-            <span className="text-xl md:text-2xl font-black tracking-tighter group-hover:bg-[var(--accent)] group-hover:text-black transition-colors px-1">KINCLOTH</span>
+            <img src="/images/logo.png" alt="KINCLOTH" className="h-8 md:h-10 object-contain brightness-100 dark:invert" />
           </Link>
 
           {/* Desktop Nav */}
@@ -146,7 +146,7 @@ export const Header = () => {
               className="fixed top-0 left-0 bottom-0 w-[85%] max-w-xs bg-[var(--background)] border-r-[3px] border-[var(--border)] z-[101] flex flex-col"
             >
               <div className="p-6 flex items-center justify-between border-b-2 border-[var(--border)]">
-                <span className="text-xl font-black italic tracking-tighter">KINCLOTH</span>
+                <img src="/images/logo.png" alt="KINCLOTH" className="h-6 md:h-8 object-contain dark:invert" />
                 <button 
                   onClick={() => setIsMenuOpen(false)}
                   className="p-2 neo-border hover:bg-[var(--accent)] transition-colors"

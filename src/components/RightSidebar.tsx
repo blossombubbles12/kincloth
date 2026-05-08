@@ -18,13 +18,13 @@ export const RightSidebar: React.FC<{ onOpenCart: () => void }> = ({ onOpenCart 
   return (
     <div className="flex flex-col gap-10">
       {/* Quick Bag Summary */}
-      <section className="neo-border bg-white p-6 neo-shadow">
-        <div className="flex items-center justify-between mb-6 border-b-2 border-black pb-2">
+      <section className="neo-border bg-[var(--card)] p-6 neo-shadow">
+        <div className="flex items-center justify-between mb-6 border-b-2 border-[var(--border)] pb-2">
           <div className="flex items-center gap-2">
             <ShoppingBag size={18} />
             <h3 className="text-xl font-black tracking-tighter">YOUR BAG</h3>
           </div>
-          <span className="bg-[#ffff00] px-2 font-black border-2 border-black">
+          <span className="bg-[var(--accent)] px-2 font-black border-2 border-[var(--border)] text-black">
             {itemCount}
           </span>
         </div>
@@ -44,7 +44,7 @@ export const RightSidebar: React.FC<{ onOpenCart: () => void }> = ({ onOpenCart 
                 </div>
                 <button 
                   onClick={() => item.line_item_id && removeFromCart(item.line_item_id)}
-                  className="text-black hover:text-red-500 transition-colors"
+                  className="text-[var(--foreground)] hover:text-red-500 transition-colors"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -53,9 +53,9 @@ export const RightSidebar: React.FC<{ onOpenCart: () => void }> = ({ onOpenCart 
             {items.length > 3 && (
               <p className="text-[10px] font-black text-center opacity-50">+{items.length - 3} MORE ITEMS</p>
             )}
-            <div className="border-t-2 border-black pt-4 flex justify-between items-center bg-[#f0f0f0] p-2">
+            <div className="border-t-2 border-[var(--border)] pt-4 flex justify-between items-center bg-[var(--card-muted)] p-2">
               <span className="font-black text-xs">TOTAL</span>
-              <span className="font-black text-lg">${totalPrice.toFixed(0)}</span>
+              <span className="font-black text-lg text-[var(--foreground)]">${totalPrice.toFixed(0)}</span>
             </div>
             <button 
               onClick={onOpenCart}
@@ -68,7 +68,7 @@ export const RightSidebar: React.FC<{ onOpenCart: () => void }> = ({ onOpenCart 
       </section>
 
       {/* Community / Saved Link */}
-      <Link href="/favourites" className="neo-border bg-[#ffff00] p-6 neo-shadow block group hover:translate-x-1 hover:translate-y-1 transition-transform">
+      <Link href="/favourites" className="neo-border bg-[var(--accent)] text-black p-6 neo-shadow block group hover:translate-x-1 hover:translate-y-1 transition-transform">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Heart size={20} className={favCount > 0 ? "fill-black" : ""} />
@@ -100,12 +100,12 @@ export const RightSidebar: React.FC<{ onOpenCart: () => void }> = ({ onOpenCart 
 
       {/* RAW NEWSLETTER */}
       <section className="bg-black text-white p-8 neo-shadow relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-24 h-24 bg-[#ffff00] translate-x-12 -translate-y-12 rotate-45 group-hover:translate-x-10 transition-transform" />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--accent)] translate-x-12 -translate-y-12 rotate-45 group-hover:translate-x-10 transition-transform" />
         <h4 className="font-bold text-lg tracking-tight mb-4 leading-none">The Inside Line</h4>
         <p className="text-xs font-bold opacity-60 mb-6 uppercase tracking-widest leading-relaxed">Early drops. Raw updates. No polish.</p>
         
         {subscribed ? (
-          <div className="bg-[#ffff00] text-black p-3 font-black text-center text-sm rotate-2">
+          <div className="bg-[var(--accent)] text-black p-3 font-black text-center text-sm rotate-2">
             ON THE LIST.
           </div>
         ) : (
@@ -113,13 +113,13 @@ export const RightSidebar: React.FC<{ onOpenCart: () => void }> = ({ onOpenCart 
             <input 
               type="text" 
               placeholder="EMAIL" 
-              className="w-full bg-white text-black p-3 font-black text-sm outline-none border-b-4 border-[#ffff00] placeholder:opacity-30"
+              className="w-full bg-white text-black p-3 font-black text-sm outline-none border-b-4 border-[var(--accent)] placeholder:opacity-30"
               value={email}
               onChange={e => setEmail(e.target.value)}
             />
             <button 
               onClick={() => email && setSubscribed(true)}
-              className="w-full bg-[#ffff00] text-black font-black py-3 text-sm hover:translate-x-1 hover:translate-y-1 transition-transform"
+              className="w-full bg-[var(--accent)] text-black font-black py-3 text-sm hover:translate-x-1 hover:translate-y-1 transition-transform"
             >
               JOIN THE CHAOS
             </button>

@@ -48,7 +48,7 @@ export const ProductCard: React.FC<{
       className={`relative flex ${mobile ? 'flex-row' : 'flex-col'} bg-[var(--card)] neo-border neo-shadow-hover transition-all group overflow-hidden`}
     >
       {/* ── Media ── */}
-      <div className={`relative flex-shrink-0 ${mobile ? 'w-32' : 'w-full'} aspect-[3/4] bg-zinc-100 overflow-hidden border-b-[3px] border-black`}>
+      <div className={`relative flex-shrink-0 ${mobile ? 'w-32' : 'w-full'} aspect-[3/4] bg-[var(--card-muted)] overflow-hidden border-b-[3px] border-[var(--border)]`}>
         <Link href={`/products/${product.id}`} className="block w-full h-full">
           {product.thumbnail_url ? (
             <img
@@ -57,7 +57,7 @@ export const ProductCard: React.FC<{
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:rotate-1"
             />
           ) : (
-            <div className="w-full h-full bg-zinc-200" />
+            <div className="w-full h-full bg-[var(--card-muted)]" />
           )}
         </Link>
 
@@ -75,7 +75,7 @@ export const ProductCard: React.FC<{
             toggleFavourite(product);
           }}
           className={`absolute top-2 right-2 w-9 h-9 neo-border flex items-center justify-center transition-colors ${
-            isLiked ? 'bg-[#ffff00]' : 'bg-[var(--card)]'
+            isLiked ? 'bg-[var(--accent)] text-black' : 'bg-[var(--card)]'
           }`}
         >
           <Heart size={16} fill={isLiked ? 'black' : 'none'} />
