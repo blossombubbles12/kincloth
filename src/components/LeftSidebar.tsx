@@ -7,15 +7,14 @@ import { useRecentViewed } from '@/lib/recent-viewed-context';
 
 interface LeftSidebarProps {
   products: Product[];
+  selectedCategory: string;
+  setSelectedCategory: (category: string) => void;
 }
 
-export const LeftSidebar: React.FC<LeftSidebarProps> = ({ products }) => {
+export const LeftSidebar: React.FC<LeftSidebarProps> = ({ products, selectedCategory, setSelectedCategory }) => {
   const { recentProducts } = useRecentViewed();
-  const [activeCategory, setActiveCategory] = React.useState('All');
 
-  const categories = React.useMemo(() => {
-    return ['All', ...Array.from(new Set(products.map(p => p.category).filter(Boolean)))];
-  }, [products]);
+  const categories = ['All', 'Hoodies', 'Bottoms', 'T-Shirts', 'Accessories', 'Activewear', 'Plain Tees'];
 
   return (
     <div className="flex flex-col gap-10">
@@ -32,9 +31,9 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ products }) => {
           {categories.map((cat) => (
             <button
               key={cat as string}
-              onClick={() => setActiveCategory(cat as string)}
+              onClick={() => setSelectedCategory(cat as string)}
               className={`text-left text-sm font-black px-4 py-2 neo-border transition-all ${
-                activeCategory === cat
+                selectedCategory === cat
                   ? 'bg-[#ffff00] translate-x-2'
                   : 'bg-white hover:bg-[#ffff00] hover:translate-x-1'
               }`}

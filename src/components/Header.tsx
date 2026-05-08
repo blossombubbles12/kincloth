@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, Menu, Heart, Search, X } from 'lucide-react';
+import { ShoppingBag, Menu, Heart, Search, X, ChevronDown } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
 import { useFavourites } from '@/lib/favourites-context';
 import { ThemeToggle } from './ThemeToggle';
@@ -37,13 +37,36 @@ export const Header = () => {
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-1">
             {NAV_LINKS.map(({ label, href }) => (
-              <Link
-                key={label}
-                href={href}
-                className="text-[10px] font-black uppercase tracking-[0.15em] px-3 py-1.5 hover:bg-[var(--accent)] hover:text-black transition-colors border-2 border-transparent hover:border-[var(--border)]"
-              >
-                {label}
-              </Link>
+              label === 'Shop' ? (
+                <div key={label} className="relative group">
+                  <Link
+                    href={href}
+                    className="flex items-center gap-1 text-[10px] font-black uppercase tracking-[0.15em] px-3 py-1.5 hover:bg-[var(--accent)] hover:text-black transition-colors border-2 border-transparent hover:border-[var(--border)]"
+                  >
+                    {label} <ChevronDown size={12} className="transition-transform group-hover:rotate-180" />
+                  </Link>
+                  {/* Dropdown Menu */}
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-[var(--background)] border-[3px] border-[var(--border)] neo-shadow opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] flex flex-col">
+                    {['All', 'Hoodies', 'Bottoms', 'T-Shirts', 'Accessories', 'Activewear', 'Plain Tees'].map((cat) => (
+                      <Link
+                        key={cat}
+                        href={`/shop?category=${cat}`}
+                        className="px-4 py-3 text-xs font-black uppercase tracking-widest border-b-[2px] border-[var(--border)] last:border-b-0 hover:bg-[#ffff00] hover:translate-x-1 transition-transform"
+                      >
+                        {cat}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  key={label}
+                  href={href}
+                  className="text-[10px] font-black uppercase tracking-[0.15em] px-3 py-1.5 hover:bg-[var(--accent)] hover:text-black transition-colors border-2 border-transparent hover:border-[var(--border)]"
+                >
+                  {label}
+                </Link>
+              )
             ))}
           </nav>
 

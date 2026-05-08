@@ -149,19 +149,28 @@ const ReelItem: React.FC<ReelItemProps> = ({ product, isActive, isMuted }) => {
   );
 };
 
+import { useSearchParams } from 'next/navigation';
+
 export function ReelsView({ products }: { products: Product[] }) {
+  const searchParams = useSearchParams();
   const [activeIndex, setActiveIndex] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
+
+  // Sync with URL
+  useEffect(() => {
+    const category = searchParams.get('category') || 'All';
+    setSelectedCategory(category);
+  }, [searchParams]);
   const [isMuted, setIsMuted] = useState(true);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const categories = ['All', ...Array.from(new Set(products.map(p => p.brand || 'Other')))];
+  const categories = ['All', 'Hoodies', 'Bottoms', 'T-Shirts', 'Accessories', 'Activewear', 'Plain Tees'];
   
   const filteredProducts = selectedCategory === 'All' 
     ? products 
-    : products.filter(p => p.brand === selectedCategory);
+    : products.filter(p => p.category === selectedCategory);
 
   const handleScroll = () => {
     if (scrollRef.current) {

@@ -13,11 +13,16 @@ import {
 import { ProductCardSkeleton } from './Skeleton';
 import { MainLayout } from './MainLayout';
 
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+
 interface Props {
   initialProducts: Product[];
 }
 
 export function ShopPageView({ initialProducts }: Props) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   
   // Use the infinite products hook to get the actual product list
@@ -28,7 +33,13 @@ export function ShopPageView({ initialProducts }: Props) {
   const [sortBy, setSortBy] = useState('featured');
   const [priceRanges, setPriceRanges] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedCategory, setSelectedCategory] = useState<string>(searchParams.get('category') || 'All');
+
+  // Sync state with URL changes (e.g. back/forward button or header navigation)
+  React.useEffect(() => {
+    const category = searchParams.get('category') || 'All';
+    setSelectedCategory(category);
+  }, [searchParams]);
 
   // Filtering Logic
   const filteredProducts = useMemo(() => {
@@ -56,7 +67,20 @@ export function ShopPageView({ initialProducts }: Props) {
     if (sortBy === 'newest') result.reverse(); // Mock sort
 
     return result;
-  }, [allProducts, priceRanges, sortBy]);
+  }, [allProducts, priceRanges, sortBy, selectedCategory]);
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    
+    const params = new URLSearchParams(searchParams.toString());
+    if (category === 'All') {
+      params.delete('category');
+    } else {
+      params.set('category', category);
+    }
+    
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   const togglePriceRange = (range: string) => {
     setPriceRanges(prev => 
@@ -80,10 +104,10 @@ export function ShopPageView({ initialProducts }: Props) {
               <SlidersHorizontal size={12} /> Filter{priceRanges.length > 0 ? ` (${priceRanges.length})` : ''}
             </button>
             <div className="w-[1px] h-4 bg-[var(--border)] flex-shrink-0 mx-1" />
-            {['All', ...Array.from(new Set(allProducts.map(p => p.category).filter(Boolean)))].map(cat => (
+            {['All', 'Hoodies', 'Bottoms', 'T-Shirts', 'Accessories', 'Activewear', 'Plain Tees'].map(cat => (
               <button
                 key={cat}
-                onClick={() => setSelectedCategory(cat as string)}
+                onClick={() => handleCategoryChange(cat)}
                 className={`flex-shrink-0 px-3 py-1.5 neo-border text-[11px] font-black uppercase tracking-widest transition-colors whitespace-nowrap ${
                   selectedCategory === cat
                     ? 'bg-black text-white'
@@ -210,10 +234,10 @@ export function ShopPageView({ initialProducts }: Props) {
                   <div>
                     <p className="text-xs font-black uppercase tracking-widest mb-4 pb-2 border-b-2 border-[var(--border)]">Category</p>
                     <div className="grid grid-cols-2 gap-2">
-                      {['All', ...Array.from(new Set(allProducts.map(p => p.category).filter(Boolean)))].map(cat => (
+                      {['All', 'Hoodies', 'Bottoms', 'T-Shirts', 'Accessories', 'Activewear', 'Plain Tees'].map(cat => (
                         <button
                           key={cat}
-                          onClick={() => setSelectedCategory(cat as string)}
+                          onClick={() => handleCategoryChange(cat as string)}
                           className={`px-3 py-3 neo-border text-xs font-bold uppercase tracking-wide text-left transition-colors ${
                             selectedCategory === cat
                               ? 'bg-[var(--foreground)] text-[var(--background)]'
@@ -310,7 +334,7 @@ export function ShopPageView({ initialProducts }: Props) {
               </div>
             </div>
 
-            <LeftSidebar products={allProducts} />
+            <LeftSidebar products={allProducts} selectedCategory={selectedCategory} setSelectedCategory={handleCategoryChange} />
           </div>
 
           {/* Center: Toolbar + Product Grid */}
