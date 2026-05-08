@@ -32,30 +32,39 @@ export function AboutPageView() {
   const PageContent = () => (
     <div className="flex flex-col w-full">
       {/* ── Hero Statement ── */}
-      <section className="px-6 py-20 lg:py-32 border-b-[3px] border-[var(--border)] bg-[var(--accent)] text-black relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-8 opacity-10">
-          <Globe size={300} />
+      <section className="relative border-b-[3px] border-[var(--border)] overflow-hidden bg-black max-h-[400px] lg:max-h-[600px] flex items-center justify-center">
+        {/* Responsive image with max-width to maintain sharpness */}
+        <div className="w-full relative">
+          <img 
+            src="https://res.cloudinary.com/dtw0ajpwa/image/upload/v1778273855/kincloth_about_d3fcmm.jpg"
+            alt="About Kincloth"
+            className="w-full h-auto object-cover object-top max-h-[400px] lg:max-h-[600px] opacity-70 block"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
         </div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <motion.h1 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            variants={fadeIn}
-            className="text-5xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.9]"
-          >
-            WE SET <br className="hidden lg:block" /> THE STANDARD.
-          </motion.h1>
-          <motion.p 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-6 text-xl lg:text-3xl font-bold max-w-3xl leading-snug uppercase tracking-tight"
-          >
-            KinCloth is a culture-driven streetwear brand focused on well-fitted essentials and statement pieces. Built for those who lead, never follow.
-          </motion.p>
+
+        <div className="absolute inset-0 flex items-center">
+          <div className="max-w-7xl mx-auto px-6 w-full">
+            <motion.h1 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              variants={fadeIn}
+              className="text-4xl sm:text-6xl lg:text-9xl font-black tracking-tighter uppercase leading-[0.8] text-white"
+            >
+              WE SET <br className="hidden lg:block" /> THE STANDARD.
+            </motion.h1>
+            <motion.p 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="mt-4 sm:mt-6 text-base sm:text-xl lg:text-3xl font-bold max-w-3xl leading-snug uppercase tracking-tight text-white/90"
+            >
+              <span className="text-[var(--accent)]">KinCloth</span> is a culture-driven streetwear brand focused on well-fitted essentials and statement pieces. Built for those who lead, never follow.
+            </motion.p>
+          </div>
         </div>
       </section>
 
